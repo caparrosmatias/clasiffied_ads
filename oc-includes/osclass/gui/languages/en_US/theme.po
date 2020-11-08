@@ -130,7 +130,7 @@ msgid "I want to help Osclass by linking to <a href=\"http://osclass.org/\" targ
 msgstr ""
 
 #: admin/settings.php:46
-msgid "This website is proudly using the <a title=\"Osclass web\" href=\"http://osclass.org/\">classifieds scripts</a> software <strong>Osclass</strong>"
+msgid "This website is Orgullo using the <a title=\"Osclass web\" href=\"http://osclass.org/\">classifieds scripts</a> software <strong>Osclass</strong>"
 msgstr ""
 
 #: admin/settings.php:50

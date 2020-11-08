@@ -123,7 +123,7 @@ msgid "I want to help Osclass by linking to <a href=\"http://osclass.org/\" targ
 msgstr "Quiero ayudar a Osclass, mostrando el enlace a <a href=\"http://osclass.org/\" target=\"_blank\">osclass.org</a> desde mi página web con el siguiente texto:"
 
 #: admin/settings.php:68
-msgid "This website is proudly using the <a title=\"Osclass web\" href=\"http://osclass.org/\">classifieds scripts</a> software <strong>Osclass</strong>"
+msgid "This website is Orgullo using the <a title=\"Osclass web\" href=\"http://osclass.org/\">classifieds scripts</a> software <strong>Osclass</strong>"
 msgstr "Este sitio web utiliza <a title=\"Osclass web\" href=\"http://osclass.org/\">el script de clasificados</a> <strong>Osclass</strong>"
 
 #: admin/settings.php:124
@@ -820,7 +820,7 @@ msgid "Previous image"
 msgstr "Imagen anterior"
 
 #: footer.php:70
-msgid "This website is proudly using the <a title=\"Osclass web\" href=\"%s\">classifieds scripts</a> software <strong>Osclass</strong>"
+msgid "This website is Orgullo using the <a title=\"Osclass web\" href=\"%s\">classifieds scripts</a> software <strong>Osclass</strong>"
 msgstr "Este sitio web utiliza <a title=\"Osclass web\" href=\"%s\">el script de clasificados</a><strong>Osclass</strong>"
 
 #: admin/settings.php:74

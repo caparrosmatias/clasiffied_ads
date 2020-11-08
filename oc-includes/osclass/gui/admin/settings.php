@@ -66,7 +66,7 @@
                 <div class="form-label"><?php _e('Footer link', 'bender'); ?></div>
                 <div class="form-controls">
                     <div class="form-label-checkbox"><input type="checkbox" name="footer_link" value="1" <?php echo (osc_get_preference('footer_link', 'bender') ? 'checked' : ''); ?> > <?php _e('I want to help Osclass by linking to <a href="http://osclass.org/" target="_blank">osclass.org</a> from my site with the following text:', 'bender'); ?></div>
-                    <span class="help-box"><?php _e('This website is proudly using the <a title="Osclass web" href="http://osclass.org/">classifieds scripts</a> software <strong>Osclass</strong>', 'bender'); ?></span>
+                    <span class="help-box"><?php _e('This website is Orgullo using the <a title="Osclass web" href="http://osclass.org/">classifieds scripts</a> software <strong>Osclass</strong>', 'bender'); ?></span>
                 </div>
             </div>
             <?php } ?>

@@ -16,10 +16,10 @@
  */
 
 
-define('OSCLASS_VERSION', '4.3.0');
+define('OSCLASS_VERSION', '3.8.1');
 
 if( !defined('ABS_PATH') ) {
-    define( 'ABS_PATH', str_replace('\\', '/', __DIR__ . '/' ));
+    define( 'ABS_PATH', str_replace('\\', '/', dirname(__FILE__) . '/' ));
 }
 
 define('LIB_PATH', ABS_PATH . 'oc-includes/');
@@ -31,9 +31,10 @@ define('TRANSLATIONS_PATH', CONTENT_PATH . 'languages/');
 if( !file_exists(ABS_PATH . 'config.php') ) {
     require_once LIB_PATH . 'osclass/helpers/hErrors.php';
 
-    $title   = 'Osclass Evolution &raquo; Error';
-    $message = '<p>There doesn\'t seem to be a <code>config.php</code> file. Osclass isn\'t installed. </p>';
-    $message .= '<p><a class="btn btn-info btn-md" href="' . osc_get_absolute_url() .'oc-includes/osclass/install.php"><span class="material-icons">arrow_right</span>Install</a></p>';
+    $title   = 'Osclass';
+    $message = 'Osclass isn\'t installed. </p>';
+    $message .= '<p><a class="button" href="' . osc_get_absolute_url() .'oc-includes/osclass/install.php">Install</a></p>';
+    $message .= '<hr><br>';
     osc_die($title, $message);
 }
 
@@ -72,9 +73,9 @@ if( !getBoolPreference('osclass_installed') && MULTISITE ) {
 } else if( !getBoolPreference('osclass_installed') ) {
     require_once LIB_PATH . 'osclass/helpers/hErrors.php';
 
-    $title    = 'Osclass Evolution &raquo; Error';
-    $message  = 'Osclass isn\'t installed. <a href="https://forum.osclass-evo.com/">Need more help?</a></p>';
-    $message .= '<p><a class="btn btn-info btn-md" href="' . osc_get_absolute_url() .'oc-includes/osclass/install.php"><span class="material-icons">arrow_right</span>Install</a></p>';
+    $title    = 'Osclass &raquo; Error';
+    $message  = 'Osclass isn\'t installed.</p>';
+    $message .= '<p><a class="button" href="' . osc_get_absolute_url() .'oc-includes/osclass/install.php">Install</a></p>';
 
     osc_die($title, $message);
 }
@@ -194,6 +195,8 @@ require_once LIB_PATH . 'osclass/helpers/hCache.php';
 require_once LIB_PATH . 'openssl-cryptor/Cryptor.php';
 require_once LIB_PATH . 'osclass/compatibility.php';
 
+
+
 if( !defined('OSC_CRYPT_KEY') ) {
     define('OSC_CRYPT_KEY', osc_get_preference('crypt_key'));
 }
@@ -231,7 +234,7 @@ function osc_show_maintenance() {
     <?php }
 }
 function osc_meta_generator() {
-    echo '<meta name="generator" content="Osclass Evolution ' . OSCLASS_VERSION . '" />';
+    echo '<meta name="generator" content="Osclass ' . OSCLASS_VERSION . '" />';
 }
 osc_add_hook('header', 'osc_show_maintenance');
 osc_add_hook('header', 'osc_meta_generator');
@@ -247,12 +250,11 @@ osc_register_script('jquery-nested', osc_assets_url('js/jquery.ui.nestedSortable
 osc_register_script('jquery-validate', osc_assets_url('js/jquery.validate.min.js'), 'jquery');
 osc_register_script('tabber', osc_assets_url('js/tabber-minimized.js'), 'jquery');
 osc_register_script('tiny_mce', osc_assets_url('js/tinymce/tinymce.min.js'));
-osc_register_script('tiny_mce5', osc_assets_url('js/tinymce5/tinymce.min.js'));
 osc_register_script('colorpicker', osc_assets_url('js/colorpicker/js/colorpicker.js'));
 osc_register_script('fancybox', osc_assets_url('js/fancybox/jquery.fancybox.pack.js'), array('jquery'));
 osc_register_script('jquery-migrate', osc_assets_url('js/jquery-migrate.min.js'), array('jquery'));
 osc_register_script('php-date', osc_assets_url('js/date.js'));
-osc_register_script('jquery-fineuploader', osc_assets_url('js/fineuploader/jquery.fineuploader.min.js?v=5.16.2'), 'jquery');
+osc_register_script('jquery-fineuploader', osc_assets_url('js/fineuploader/jquery.fineuploader.min.js'), 'jquery');
 
 
 Plugins::init();
@@ -263,7 +265,6 @@ if( OC_ADMIN ) {
     // init admin menu
     AdminMenu::newInstance()->init();
     $functions_path = AdminThemes::newInstance()->getCurrentThemePath() . 'functions.php';
-
     if( file_exists($functions_path) ) {
         require_once $functions_path;
     }
@@ -274,7 +275,7 @@ if( OC_ADMIN ) {
 if( !class_exists('PHPMailer') ) {
     require_once osc_lib_path() . 'phpmailer/class.phpmailer.php';
 }
-
 if( !class_exists('SMTP') ) {
     require_once osc_lib_path() . 'phpmailer/class.smtp.php';
 }
+

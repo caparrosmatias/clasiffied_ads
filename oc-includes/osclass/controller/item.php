@@ -99,7 +99,6 @@
                     // SAVE form data before CSRF CHECK
                     $mItems = new ItemActions(false);
                     $mItems->prepareData(true);
-
                     foreach( $mItems->data as $key => $value ) {
                         Session::newInstance()->_setForm($key,$value);
                     }
@@ -151,7 +150,7 @@
                     // POST ITEM ( ADD ITEM )
                     $success = $mItems->add();
 
-                    if($success != 1 && $success != 2 && $success != 3) {
+                    if($success!=1 && $success!=2) {
                         osc_add_flash_error_message( $success);
                         $this->redirectTo( osc_item_post_url() );
                     } else {
@@ -160,32 +159,18 @@
                                 Session::newInstance()->_dropKeepForm('meta_'.$key);
                             }
                         }
-
                         Session::newInstance()->_clearVariables();
-
-                        if($success == 1 || $success == 3) {
-                            if($success == 3) {
-                                osc_add_flash_warning_message( _m('Your listing needs to be approved by the administrator, it could take a while until it appear on the website') );
-                            } else {
-                                osc_add_flash_ok_message( _m('Check your inbox to validate your listing') );
-                            }
+                        if($success==1) {
+                            osc_add_flash_ok_message( _m('Check your inbox to validate your listing') );
                         } else {
                             osc_add_flash_ok_message( _m('Your listing has been published') );
                         }
 
-                        $itemId = Params::getParam('itemId');
+                        $itemId         = Params::getParam('itemId');
+
                         $category = Category::newInstance()->findByPrimaryKey(Params::getParam('catId'));
-
-                        if(osc_item_posted_redirect() == 'item') {
-                            View::newInstance()->_exportVariableToView("item", Item::newInstance()->findByPrimaryKey($itemId));
-
-                            $redirectUrl = osc_item_url();
-                        } else {
-                            View::newInstance()->_exportVariableToView('category', $category);
-                            $redirectUrl = osc_search_category_url();
-                        }
-
-                        $this->redirectTo($redirectUrl);
+                        View::newInstance()->_exportVariableToView('category', $category);
+                        $this->redirectTo(osc_search_category_url());
                     }
                 break;
                 case 'item_edit':   // edit item
@@ -252,25 +237,16 @@
 
                         $success = $mItems->edit();
 
-                        if($success==1 || $success == 2) {
+                        if($success==1) {
                             if(is_array($meta)) {
                                 foreach( $meta as $key => $value ) {
                                     Session::newInstance()->_dropKeepForm('meta_'.$key);
                                 }
                             }
-
                             Session::newInstance()->_clearVariables();
-
-                            if($success == 2) {
-                                osc_add_flash_warning_message( _m('Your listing needs to be approved by the administrator, it could take a while until it appear on the website') );
-                                $redirectUrl = osc_base_url();
-                            } else {
-                                osc_add_flash_ok_message( _m("Great! We've just updated your listing") );
-                                $redirectUrl = osc_item_url();
-                            }
-
+                            osc_add_flash_ok_message( _m("Great! We've just updated your listing") );
                             View::newInstance()->_exportVariableToView("item", Item::newInstance()->findByPrimaryKey($id));
-                            $this->redirectTo( $redirectUrl );
+                            $this->redirectTo( osc_item_url() );
                         } else {
                             osc_add_flash_error_message( $success);
                             $this->redirectTo( osc_item_edit_url($secret, $id) );

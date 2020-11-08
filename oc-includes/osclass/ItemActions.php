@@ -62,9 +62,12 @@
             $aItem       = $this->data;
             $aItem = osc_apply_filter('item_add_prepare_data', $aItem);
             $is_spam     = 0;
-            $enabled     = $aItem['enable'] == 'ENABLED' ? 1 : 0;
+            $enabled     = 1;
             $code        = osc_genRandomPassword();
             $flash_error = '';
+
+            // Requires email validation?
+            $has_to_validate = (osc_moderate_items() != -1) ? true : false;
 
             // Check status
             $active = $aItem['active'];
@@ -186,7 +189,7 @@
                     's_contact_name'        => $contactName,
                     's_contact_email'       => $contactEmail,
                     's_secret'              => $code,
-                    'b_active'              => ($active == 'ACTIVE' ? 1 : 0),
+                    'b_active'              => ($active=='ACTIVE'?1:0),
                     'b_enabled'             => $enabled,
                     'b_show_email'          => $aItem['showEmail'],
                     'b_spam'                => $is_spam,
@@ -236,9 +239,8 @@
                 /**
                  * META FIELDS
                  */
-                if($meta && count($meta)) {
+                if($meta!='' && count($meta)>0) {
                     $mField = Field::newInstance();
-
                     foreach($meta as $k => $v) {
                         // if dateinterval
                         if(is_array($v) && !isset($v['from']) && !isset($v['to']) ) {
@@ -254,20 +256,15 @@
 
                 $item = $this->manager->findByPrimaryKey($itemId);
                 $aItem['item'] = $item;
-                $aItem['item']['item_action'] = 'add';
+
 
                 Session::newInstance()->_set('last_publish_time', time());
-
                 if(!$this->is_admin) {
                     $this->sendEmails($aItem);
                 }
 
-                if($active == 'INACTIVE' || !$enabled) {
+                if($active=='INACTIVE') {
                     $success = 1;
-
-                    if(osc_items_posted_moderation_enabled()) {
-                        $success = 3;
-                    }
                 } else {
                     $aAux = array(
                         'fk_i_user_id'      => $aItem['userId'],
@@ -276,12 +273,10 @@
                         'fk_i_region_id'    => $location['fk_i_region_id'],
                         'fk_i_city_id'      => $location['fk_i_city_id']
                     );
-
                     // if is_spam not increase stats
                     if($is_spam == 0) {
                         $this->_increaseStats($aAux);
                     }
-
                     $success = 2;
                 }
 
@@ -294,7 +289,6 @@
 
         function edit() {
             $aItem       = $this->data;
-            $enabled     = $aItem['enable'] == 'ENABLED' ? 1 : 0;
             $aItem = osc_apply_filter('item_edit_prepare_data', $aItem);
             $flash_error = '';
 
@@ -317,7 +311,6 @@
 
             $title_message  = '';
             $td_message     = '';
-
             foreach(@$aItem['title'] as $key => $value) {
                 if( osc_validate_text($value, 1) && osc_validate_max($value, osc_max_characters_per_title()) ) {
                     $td_message = '';
@@ -337,11 +330,9 @@
                     break;
                 }
 
-                if(!$this->is_admin || !osc_editor_enabled_at_items()) {
-                    $desc_message .=
-                        (!osc_validate_text($value, 3) ? _m("Description too short.") . PHP_EOL : '' ) .
-                        (!osc_validate_max($value, osc_max_characters_per_description()) ? _m("Description too long."). PHP_EOL : '' );
-                }
+                $desc_message .=
+                    (!osc_validate_text($value, 3) ? _m("Description too short.") . PHP_EOL : '' ) .
+                    (!osc_validate_max($value, osc_max_characters_per_description()) ? _m("Description too long."). PHP_EOL : '' );
             }
             $flash_error .= $desc_message;
 
@@ -428,7 +419,6 @@
                     'dt_mod_date'         => date('Y-m-d H:i:s')
                     ,'fk_i_category_id'   => $aItem['catId']
                     ,'i_price'            => $aItem['price']
-                    ,'b_enabled'          => $enabled
                     ,'fk_c_currency_code' => $aItem['currency']
                     ,'b_show_email'       => $aItem['showEmail']
                 );
@@ -450,8 +440,7 @@
                 // UPLOAD item resources
                 $this->uploadItemResources( $aItem['photos'], $aItem['idItem'] );
 
-                Log::newInstance()->insertLog('item', 'edit', $aItem['idItem'], current(array_values($aItem['title'])), $this->is_admin?'admin' : 'user', $this->is_admin ? osc_logged_admin_id() : osc_logged_user_id());
-
+                Log::newInstance()->insertLog('item', 'edit', $aItem['idItem'], current(array_values($aItem['title'])), $this->is_admin?'admin':'user', $this->is_admin?osc_logged_admin_id():osc_logged_user_id());
                 /**
                  * META FIELDS
                  */
@@ -468,12 +457,10 @@
 
                 $oldIsExpired = osc_isExpired($old_item['dt_expiration']);
                 $dt_expiration = Item::newInstance()->updateExpirationDate($aItem['idItem'], $aItem['dt_expiration'], false);
-
-                if($dt_expiration === false) {
+                if($dt_expiration===false) {
                     $dt_expiration = $old_item['dt_expiration'];
                     $aItem['dt_expiration'] = $old_item['dt_expiration'];
                 }
-
                 $newIsExpired = osc_isExpired($dt_expiration);
 
                 // Recalculate stats related with items
@@ -483,21 +470,7 @@
 
                 // THIS HOOK IS FINE, YAY!
                 osc_run_hook('edited_item', Item::newInstance()->findByPrimaryKey($aItem['idItem']));
-
-                if(osc_items_edited_moderation_enabled()) {
-                    if(!$this->is_admin) {
-                        $item = $this->manager->findByPrimaryKey($aItem['idItem']);
-
-                        $aItem['item'] = $item;
-                        $aItem['item']['item_action'] = 'edit';
-
-                        $this->sendEmails($aItem);
-                    }
-
-                    $success = 2;
-                } else {
-                    $success = $result;
-                }
+                $success = $result;
             }
 
             return $success;
@@ -519,14 +492,13 @@
          */
         private function _updateStats($result, $old_item, $oldIsExpired, $old_item_location, $aItem, $newIsExpired, $location)
         {
-            if($result == 1 && $old_item['b_enabled'] == 1 && $old_item['b_active'] == 1 && $old_item['b_blocked'] == 0 && $old_item['b_spam'] == 0) {
+            if($result==1 && $old_item['b_enabled']==1 && $old_item['b_active']==1 && $old_item['b_spam']==0) {
                 // if old item is expired and new item is not expired.
                 if($oldIsExpired && !$newIsExpired) {
                     // increment new item stats (user, category, location_stats)
                     if( is_numeric($aItem['userId']) ) {
                         User::newInstance()->increaseNumItems( $aItem['userId'] );
                     }
-
                     CategoryStats::newInstance()->increaseNumItems($aItem['catId']);
                     CountryStats::newInstance()->increaseNumItems($location['fk_c_country_code']);
                     RegionStats::newInstance()->increaseNumItems($location['fk_i_region_id']);
@@ -579,38 +551,8 @@
         }
 
         /**
-         * Approve an item
-         * Set b_enabled value to 1, for a given item id
-         *
-         * @param int $id
-         * @return bool
-         */
-        public function approve($id)
-        {
-            $result = $this->manager->update(
-                array('b_enabled' => 1),
-                array('pk_i_id' => $id)
-            );
-
-            // updated correctly
-            if($result == 1) {
-                osc_run_hook( 'approve_item', $id );
-                $item = $this->manager->findByPrimaryKey($id);
-
-                osc_run_hook('hook_email_item_moderated', $item);
-
-                if($item['b_active'] == 1 && $item['b_spam'] == 0 && !osc_isExpired($item['dt_expiration'])) {
-                    $this->_increaseStats($item);
-                }
-
-                return true;
-            }
-            return false;
-        }
-
-        /**
          * Activates an item.
-         * Set b_active value to 1, for a given item id
+         * Set s_enabled value to 1, for a given item id
          *
          * @param int $id
          * @return bool
@@ -651,7 +593,7 @@
 
         /**
          * Deactivates an item
-         * Set b_active value to 0, for a given item id
+         * Set s_active value to 0, for a given item id
          *
          * @param int $id
          * @return bool
@@ -677,7 +619,7 @@
 
         /**
          * Enable an item
-         * Set b_enabled value to 1 and b_blocked to 0, for a given item id
+         * Set s_enabled value to 1, for a given item id
          *
          * @param int $id
          * @return bool
@@ -685,7 +627,7 @@
         public function enable($id)
         {
             $result = $this->manager->update(
-                array('b_enabled' => 1, 'b_blocked' => 0),
+                array('b_enabled' => 1),
                 array('pk_i_id' => $id)
             );
 
@@ -693,11 +635,9 @@
             if($result == 1) {
                 osc_run_hook( 'enable_item', $id );
                 $item = $this->manager->findByPrimaryKey($id);
-
-                if($item['b_active'] == 1 && $item['b_spam'] == 0 && !osc_isExpired($item['dt_expiration']) ) {
+                if($item['b_active']==1 && $item['b_spam']==0 && !osc_isExpired($item['dt_expiration']) ) {
                     $this->_increaseStats($item);
                 }
-
                 return true;
             }
             return false;
@@ -705,7 +645,7 @@
 
         /**
          * Disable an item.
-         * Set b_enabled value to 0 and b_blocked to 1, for a given item id
+         * Set s_enabled value to 0, for a given item id
          *
          * @param int $id
          * @return bool
@@ -713,7 +653,7 @@
         public function disable($id)
         {
             $result = $this->manager->update(
-                array('b_enabled' => 0, 'b_blocked' => 1),
+                array('b_enabled' => 0),
                 array('pk_i_id' => $id)
             );
 
@@ -1173,9 +1113,8 @@
             if( $is_add ) {   // ADD
                 if($this->is_admin) {
                     $active = 'ACTIVE';
-                    $enable = 'ENABLED';
                 } else {
-                    if(osc_moderate_items() > 0) { // HAS TO VALIDATE
+                    if(osc_moderate_items()>0) { // HAS TO VALIDATE
                         if(!osc_is_web_user_logged_in()) { // NO USER IS LOGGED, VALIDATE
                             $active = 'INACTIVE';
                         } else { // USER IS LOGGED
@@ -1199,30 +1138,9 @@
                     } else {
                         $active = 'ACTIVE';
                     }
-
-                    if(osc_items_posted_moderation_enabled()) {
-                        $enable = 'DISABLED';
-                    } else {
-                        $enable = 'ENABLED';
-                    }
                 }
-
                 $aItem['active']        = $active;
-                $aItem['enable']        = $enable;
             } else {          // EDIT
-
-                if($this->is_admin) {
-                    $active = 'ACTIVE';
-                    $enable = 'ENABLED';
-                } else {
-                    if(osc_items_edited_moderation_enabled()) {
-                        $enable = 'DISABLED';
-                    } else {
-                        $enable = 'ENABLED';
-                    }
-                }
-
-                $aItem['enable']    = $enable;
                 $aItem['secret']    = Params::getParam('secret');
                 $aItem['idItem']    = Params::getParam('id');
             }
@@ -1241,12 +1159,7 @@
             $aItem['currency']      = Params::getParam('currency');
             $aItem['showEmail']     = (Params::getParam('showEmail') != '') ? 1 : 0;
             $aItem['title']         = Params::getParam('title');
-            if($this->is_admin && osc_editor_enabled_at_items()) {
-                $aItem['description']   = Params::getParam('description', false, false, false);
-            } else {
-                $aItem['description']   = Params::getParam('description');
-            }
-
+            $aItem['description']   = Params::getParam('description');
             $aItem['photos']        = Params::getFiles('photos');
             $ajax_photos            = Params::getParam('ajax_photos');
             $aItem['s_ip']          = get_ip();
@@ -1569,9 +1482,7 @@
             /**
              * Send email to non-reg user requesting item activation
              */
-            if(osc_items_posted_moderation_enabled() || osc_items_edited_moderation_enabled()) {
-                osc_run_hook('hook_email_admin_item_moderation', $item);
-            } else if( Session::newInstance()->_get('userId') == '' && $aItem['active']=='INACTIVE' ) {
+            if( Session::newInstance()->_get('userId') == '' && $aItem['active']=='INACTIVE' ) {
                 osc_run_hook('hook_email_item_validation_non_register_user', $item);
             } else if ( $aItem['active']=='INACTIVE' ) { //  USER IS REGISTERED
                 osc_run_hook('hook_email_item_validation', $item);
@@ -1582,7 +1493,7 @@
             /**
              * Send email to admin about the new item
              */
-            if (osc_notify_new_item() && !osc_items_posted_moderation_enabled() && !osc_items_edited_moderation_enabled()) {
+            if (osc_notify_new_item()) {
                 osc_run_hook('hook_email_admin_new_item', $item);
             }
         }

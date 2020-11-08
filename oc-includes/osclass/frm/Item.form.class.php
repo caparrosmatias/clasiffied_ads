@@ -170,139 +170,6 @@
         <?php
         }
 
-        static public function evolution_category_multiple_selects($categories = null, $item = null, $default_item = null, $parent_selectable = false) {
-            $categoryID = null;
-
-            if (osc_item_category_id() != null) {
-                $categoryID = osc_item_category_id();
-            }
-
-            if (Session::newInstance()->_getForm('catId') != '') {
-                $categoryID = Session::newInstance()->_getForm('catId');
-            }
-
-            if ($item == null) {
-                $item = osc_item();
-            }
-
-            if (isset($item['fk_i_category_id'])) {
-                $categoryID = $item['fk_i_category_id'];
-            }
-
-            $tmp_categories_tree = Category::newInstance()->toRootTree($categoryID);
-            $categories_tree = array();
-
-            foreach($tmp_categories_tree as $t) {
-                $categories_tree[] = $t['pk_i_id'];
-            }
-
-            unset($tmp_categories_tree);
-
-            if($categories == null) {
-                $categories = Category::newInstance()->listEnabled();
-            }
-
-            parent::generic_input_hidden("catId", $categoryID);
-
-            ?>
-            <div id="select_holder"></div>
-
-            <script type="text/javascript" charset="utf-8">
-                var catPriceEnabled = new Array();
-
-                <?php
-                $categories = Category::newInstance()->listAll(false);
-
-                foreach($categories as $c) {
-                    echo 'catPriceEnabled[' . $c['pk_i_id'] . '] = ' . $c['b_price_enabled'] . ';';
-                }
-                ?>
-
-                <?php
-                $tmp_cat = array();
-
-                foreach($categories as $c) {
-                    if($c['fk_i_parent_id'] == null ) { $c['fk_i_parent_id'] = 0; }
-
-                    $tmp_cat[$c['fk_i_parent_id']][] = array($c['pk_i_id'], $c['s_name']);
-                }
-
-                foreach($tmp_cat as $k => $v) {
-                    echo 'var categories_' . $k . ' = ' . json_encode($v) . ';' . PHP_EOL;
-                }
-                ?>
-
-                if(osc == undefined) { var osc = {}; }
-                if(osc.langs == undefined) { osc.langs = {}; }
-                if(osc.langs.select_category == undefined) { osc.langs.select_category = '<?php echo osc_esc_js(__('Select category')); ?>'; }
-                if(osc.langs.select_subcategory == undefined) { osc.langs.select_subcategory = '<?php echo osc_esc_js(__('Select subcategory')); ?>'; }
-
-                osc.item_post = {};
-                osc.item_post.category_id    = '<?php echo $categoryID; ?>';
-                osc.item_post.category_tree_id    = <?php echo json_encode($categories_tree); ?>;
-
-                $(document).ready(function(){
-                    <?php if($categoryID == array()) { ?>
-                        draw_select(1,0);
-                    <?php } else { ?>
-                        draw_select(1,0);
-
-                    <?php for($i = 0; $i < count($categories_tree) - 1; $i++) { ?>
-                            draw_select(<?php echo ($i + 2); ?>, <?php echo $categories_tree[$i]; ?>);
-                        <?php } ?>
-                    <?php } ?>
-
-                    $('body').on("change", '[name^="select_"]', function() {
-                        var depth = parseInt($(this).attr("depth"));
-
-                        for(var d = (depth + 1); d <= 100; d++) {
-                            $("#select_" + d).selectpicker('destroy');
-                            $("#select_" + d).remove();
-                        }
-
-                        $("#catId").attr("value", $(this).val());
-                        $("#catId").change();
-
-                        if(catPriceEnabled[$('#catId').val()] == 1) {
-                            $('.price').show();
-                        } else {
-                            $('.price').hide();
-                            $('#price').val('') ;
-                        }
-                        if((depth == 1 && $(this).val() != 0) || (depth > 1 && $(this).val() != $("#select_" + (depth-1)).val())) {
-                            draw_select(depth + 1, $(this).val());
-                        }
-
-                        $('.selectpicker').selectpicker('refresh');
-
-                        return true;
-                    });
-                });
-
-                function draw_select(select, categoryID) {
-                    tmp_categories = window['categories_' + categoryID];
-                    if( tmp_categories != null && $.isArray(tmp_categories) ) {
-                        $("#select_holder").before('<select id="select_' + select + '" class="selectpicker category-select show-tick mr-md-2" data-dropup-auto="false" data-size="7" data-width="45%" data-style="btn btn-info btn-sm" name="select_' + select + '" depth="' + select + '"></select>');
-
-                        if(categoryID == 0) {
-                            var options = '<option value="' + categoryID + '" >' + osc.langs.select_category + '</option>';
-                        } else {
-                            var options = '<option value="' + categoryID + '" >' + osc.langs.select_subcategory + '</option>';
-                        }
-
-                        $.each(tmp_categories, function(index, value){
-                            options += '<option value="' + value[0] + '" ' + (value[0] == osc.item_post.category_tree_id[select-1] ? 'selected' : '') + '>' + value[1] + '</option>';
-                        });
-
-                        osc.item_post.category_tree_id[select-1] = null;
-
-                        $('#select_' + select).html(options);
-                    }
-                }
-            </script>
-            <?php
-        }
-
         static public function category_multiple_selects($categories = null, $item = null, $default_item = null, $parent_selectable = false)
         {
 
@@ -463,11 +330,11 @@
             return true;
         }
 
-        static public function expiration_input($type = 'add', $value = '', $class = '') {
-            if($type == 'edit') {
+        static public function expiration_input($type = 'add', $value = '') {
+            if($type=='edit') {
                 $value = '-1';  // default no change expiration date
             }
-            echo '<input id="dt_expiration"  ' . ($class != '' ? 'class="' . $class . '"' : '') . ' type="text" name="dt_expiration" value="'.osc_esc_html(htmlentities($value, ENT_COMPAT, "UTF-8")).'" placeholder="yyyy-mm-dd HH:mm:ss" />';
+            echo '<input id="dt_expiration" type="text" name="dt_expiration" value="'.osc_esc_html(htmlentities($value, ENT_COMPAT, "UTF-8")).'" placeholder="yyyy-mm-dd HH:mm:ss" />';
             return true;
         }
 
@@ -571,24 +438,21 @@
              if($num_locales>1) { echo '</div>'; };
         }
 
-        static public function price_input_text($item = null, $class = '')
+        static public function price_input_text($item = null)
         {
-            if($item==null) { $item = osc_item(); }
-
+            if($item==null) { $item = osc_item(); };
             if( Session::newInstance()->_getForm('price') != "" ) {
                 $item['i_price'] = Session::newInstance()->_getForm('price');
             }
-
-            parent::generic_input_text('price', (isset($item['i_price'])) ? osc_prepare_price($item['i_price']) : null, null, false, false, $class);
+            parent::generic_input_text('price', (isset($item['i_price'])) ? osc_prepare_price($item['i_price']) : null);
         }
 
-        static public function currency_select($currencies = null, $item = null, $class = '', $attr = '') {
+        static public function currency_select($currencies = null, $item = null) {
             if( $currencies == null ) { $currencies = osc_get_currencies(); }
             if( $item == null) { $item = osc_item(); }
             if( Session::newInstance()->_getForm('currency') != '' ) {
                 $item['fk_c_currency_code'] = Session::newInstance()->_getForm('currency');
             }
-
             if( count($currencies) > 1 ) {
                 $default_key = null;
                 $currency = osc_get_preference('currency');
@@ -598,29 +462,27 @@
                     $default_key = $currency;
                 }
 
-                parent::generic_select('currency', $currencies, 'pk_c_code', 's_description', null, $default_key, $class, $attr);
+                parent::generic_select('currency', $currencies, 'pk_c_code', 's_description', null, $default_key);
             } else if( count($currencies) == 1 ) {
                 parent::generic_input_hidden("currency", $currencies[0]["pk_c_code"]);
                 echo $currencies[0]['s_description'];
             }
         }
 
-        static public function country_select($countries = null, $item = null, $class = '', $attr = '') {
-            if($countries==null) { $countries = osc_get_countries(); }
-            if($item==null) { $item = osc_item(); }
-
+        static public function country_select($countries = null, $item = null) {
+            if($countries==null) { $countries = osc_get_countries(); };
+            if($item==null) { $item = osc_item(); };
             if( count($countries) >= 1 ) {
                 if( Session::newInstance()->_getForm('countryId') != "" ) {
                     $item['fk_c_country_code'] = Session::newInstance()->_getForm('countryId');
                 }
-                parent::generic_select('countryId', $countries, 'pk_c_code', 's_name', __('Select a country...'), (isset($item['fk_c_country_code'])) ? $item['fk_c_country_code'] : null, $class, $attr);
+                parent::generic_select('countryId', $countries, 'pk_c_code', 's_name', __('Select a country...'), (isset($item['fk_c_country_code'])) ? $item['fk_c_country_code'] : null);
                 return true;
             } else {
                 if( Session::newInstance()->_getForm('country') != "" ) {
                     $item['s_country'] = Session::newInstance()->_getForm('country');
                 }
-
-                parent::generic_input_text('country', (isset($item['s_country'])) ? $item['s_country'] : null, null, false, false, $class);
+                parent::generic_input_text('country', (isset($item['s_country'])) ? $item['s_country'] : null);
                 return true;
             }
         }
@@ -639,47 +501,40 @@
                     $only_one = true;
                 }
             }
-
             parent::generic_input_text('countryName', (isset($item['s_country'])) ? $item['s_country'] : null, null, $only_one);
             parent::generic_input_hidden('countryId', (isset($item['fk_c_country_code']) && $item['fk_c_country_code']!=null)?$item['fk_c_country_code']:'');
             return true;
         }
 
-        static public function region_select($regions = null, $item = null, $class = '', $attr = '') {
+        static public function region_select($regions = null, $item = null) {
 
-            if($item==null) { $item = osc_item(); }
-
-            $countries = osc_get_countries();
+            if($item==null) { $item = osc_item(); };
 
             if( Session::newInstance()->_getForm('countryId') != "" ) {
                 $regions = Region::newInstance()->findByCountry(Session::newInstance()->_getForm('countryId'));
-            } else if($regions == null) {
+            } else if($regions==null) {
                 $regions = Region::newInstance()->findByCountry($item['fk_c_country_code']);
             }
 
-            if(count($countries) >= 1) {
+            if( count($regions) >= 1 ) {
                 if( Session::newInstance()->_getForm('regionId') != "" ) {
                     $item['fk_i_region_id'] = Session::newInstance()->_getForm('regionId');
                 }
-
-                parent::generic_select('regionId', $regions, 'pk_i_id', 's_name', __('Select a region...'), (isset($item['fk_i_region_id'])) ? $item['fk_i_region_id'] : null, $class, $attr);
+                parent::generic_select('regionId', $regions, 'pk_i_id', 's_name', __('Select a region...'), (isset($item['fk_i_region_id'])) ? $item['fk_i_region_id'] : null);
                 return true;
             } else {
                 if( Session::newInstance()->_getForm('region') != "" ) {
                     $item['s_region'] = Session::newInstance()->_getForm('region');
                 }
-
-                parent::generic_input_text('region', (isset($item['s_region'])) ? $item['s_region'] : null, null, false, false, $class);
+                parent::generic_input_text('region', (isset($item['s_region'])) ? $item['s_region'] : null);
                 return true;
             }
         }
 
 
-        static public function city_select($cities = null, $item = null, $class = '', $attr = '') {
+        static public function city_select($cities = null, $item = null) {
 
-            if($item==null) { $item = osc_item(); }
-
-            $countries = osc_get_countries();
+            if($item==null) { $item = osc_item(); };
 
             if( Session::newInstance()->_getForm('regionId') != "" ) {
                 $cities = City::newInstance()->findByRegion( Session::newInstance()->_getForm('regionId') );
@@ -687,19 +542,17 @@
                 $cities = City::newInstance()->findByRegion( $item['fk_i_region_id'] );
             }
 
-            if(count($countries) >= 1) {
+            if( count($cities) >= 1 ) {
                 if( Session::newInstance()->_getForm('cityId') != "" ) {
                     $item['fk_i_city_id'] = Session::newInstance()->_getForm('cityId');
                 }
-
-                parent::generic_select('cityId', $cities, 'pk_i_id', 's_name', __('Select a city...'), (isset($item['fk_i_city_id'])) ? $item['fk_i_city_id'] : null, $class, $attr);
+                parent::generic_select('cityId', $cities, 'pk_i_id', 's_name', __('Select a city...'), (isset($item['fk_i_city_id'])) ? $item['fk_i_city_id'] : null);
                 return true;
             } else {
                 if( Session::newInstance()->_getForm('city') != "" ) {
                     $item['s_city'] = Session::newInstance()->_getForm('city');
                 }
-
-                parent::generic_input_text('city', (isset($item['s_city'])) ? $item['s_city'] : null, null, false, false, $class);
+                parent::generic_input_text('city', (isset($item['s_city'])) ? $item['s_city'] : null);
                 return true;
             }
         }
@@ -724,49 +577,49 @@
             return true;
         }
 
-        static public function city_area_text($item = null, $class = '') {
+        static public function city_area_text($item = null) {
             if($item==null) { $item = osc_item(); };
             if( Session::newInstance()->_getForm('cityArea') != "" ) {
                 $item['s_city_area'] = Session::newInstance()->_getForm('cityArea');
             }
-            parent::generic_input_text('cityArea', (isset($item['s_city_area'])) ? $item['s_city_area'] : null, null, false, false, $class);
+            parent::generic_input_text('cityArea', (isset($item['s_city_area'])) ? $item['s_city_area'] : null);
             parent::generic_input_hidden('cityAreaId', (isset($item['fk_i_city_area_id']) && $item['fk_i_city_area_id']!=null)?$item['fk_i_city_area_id']:'');
             return true;
         }
 
-        static public function address_text($item = null, $class = '') {
+        static public function address_text($item = null) {
             if($item==null) { $item = osc_item(); };
             if( Session::newInstance()->_getForm('address') != "" ) {
                 $item['s_address'] = Session::newInstance()->_getForm('address');
             }
-            parent::generic_input_text('address', (isset($item['s_address'])) ? $item['s_address'] : null, null, false, false, $class);
+            parent::generic_input_text('address', (isset($item['s_address'])) ? $item['s_address'] : null);
             return true;
         }
 
-        static public function zip_text($item = null, $class = '') {
+        static public function zip_text($item = null) {
             if($item==null) { $item = osc_item(); };
             if( Session::newInstance()->_getForm('zip') != "") {
                 $item['s_zip'] = Session::newInstance()->_getForm('zip');
             }
-            parent::generic_input_text('zip', (isset($item['s_zip'])) ? $item['s_zip'] : null, null, false, false, $class);
+            parent::generic_input_text('zip', (isset($item['s_zip'])) ? $item['s_zip'] : null);
             return true;
         }
 
-        static public function contact_name_text($item = null, $class = '') {
+        static public function contact_name_text($item = null) {
             if($item==null) { $item = osc_item(); };
             if( Session::newInstance()->_getForm('contactName') != "" ) {
                 $item['s_contact_name'] = Session::newInstance()->_getForm('contactName');
             }
-            parent::generic_input_text('contactName', (isset($item['s_contact_name'])) ? $item['s_contact_name'] : null, null, false, false, $class);
+            parent::generic_input_text('contactName', (isset($item['s_contact_name'])) ? $item['s_contact_name'] : null);
             return true;
         }
 
-        static public function contact_email_text($item = null, $class = '') {
+        static public function contact_email_text($item = null) {
             if($item==null) { $item = osc_item(); };
             if( Session::newInstance()->_getForm('contactEmail') != "" ) {
                 $item['s_contact_email'] = Session::newInstance()->_getForm('contactEmail');
             }
-            parent::generic_input_text('contactEmail', (isset($item['s_contact_email'])) ? $item['s_contact_email'] : null, null, false, false, $class);
+            parent::generic_input_text('contactEmail', (isset($item['s_contact_email'])) ? $item['s_contact_email'] : null);
             return true;
         }
         // NOTHING TO DO
@@ -781,12 +634,12 @@
             }
         }
 
-        static public function show_email_checkbox($item = null, $class = '') {
+        static public function show_email_checkbox($item = null) {
             if($item==null) { $item = osc_item(); };
             if( Session::newInstance()->_getForm('showEmail') != 0) {
                 $item['b_show_email'] = Session::newInstance()->_getForm('showEmail');
             }
-            parent::generic_input_checkbox('showEmail', '1', (isset($item['b_show_email']) ) ? $item['b_show_email'] : false, $class);
+            parent::generic_input_checkbox('showEmail', '1', (isset($item['b_show_email']) ) ? $item['b_show_email'] : false );
             return true;
         }
 
@@ -1376,33 +1229,32 @@
         static public function plugin_post_item($case = 'form') {
 ?>
 <script type="text/javascript">
-    var catPriceEnabled = new Array();
-    <?php
-    $categories = Category::newInstance()->listAll(false);
-    foreach($categories as $c) {
-        echo 'catPriceEnabled['.$c['pk_i_id'].'] = '.$c['b_price_enabled'].';';
-    }
-    ?>
+	var catPriceEnabled = new Array();
+	<?php
+	$categories = Category::newInstance()->listAll(false);
+	foreach($categories as $c) {
+		echo 'catPriceEnabled['.$c['pk_i_id'].'] = '.$c['b_price_enabled'].';';
+	}
+	?>
     $("#catId").change(function(){
         var cat_id = $(this).val();
         <?php if(OC_ADMIN) { ?>
-            var url = '<?php echo osc_admin_base_url(true); ?>';
+        var url = '<?php echo osc_admin_base_url(true); ?>';
         <?php } else { ?>
-            var url = '<?php echo osc_base_url(true); ?>';
+        var url = '<?php echo osc_base_url(true); ?>';
         <?php } ?>
         var result = '';
 
         if(cat_id != '') {
 			if(catPriceEnabled[cat_id] == 1) {
 				$("#price").closest("div").show();
-                // trigger show-price event
-                $('#price').trigger('show-price');
+                                // trigger show-price event
+                                $('#price').trigger('show-price');
 			} else {
 				$("#price").closest("div").hide();
 				$('#price').val('') ;
-
-                // trigger hide-price event
-                $('#price').trigger('hide-price');
+                                // trigger hide-price event
+                                $('#price').trigger('hide-price');
 			}
 
             $.ajax({
@@ -1410,143 +1262,12 @@
                 url: url,
                 data: 'page=ajax&action=runhook&hook=item_<?php echo $case;?>&catId=' + cat_id,
                 dataType: 'html',
-                success: function(data) {
+                success: function(data){
                     $("#plugin-hook").html(data);
-
-                    <?php if(osc_get_preference('admin_theme') == 'evolution'): ?>
-                        if ($('.card-body').length) {
-                            String.prototype.toMoment = function () {
-                                var conversions = {
-                                    'd': 'DD',
-                                    'D': 'ddd',
-                                    'j': 'D',
-                                    'l': 'dddd',
-                                    'N': 'E',
-                                    'S': 'o',
-                                    'w': 'e',
-                                    'z': 'DDD',
-                                    'W': 'W',
-                                    'F': 'MMMM',
-                                    'm': 'MM',
-                                    'M': 'MMM',
-                                    'n': 'M',
-                                    't': '',
-                                    'L': '',
-                                    'o': 'YYYY',
-                                    'Y': 'YYYY',
-                                    'y': 'YY',
-                                    'a': 'a',
-                                    'A': 'A',
-                                    'B': '',
-                                    'g': 'h',
-                                    'G': 'H',
-                                    'h': 'hh',
-                                    'H': 'HH',
-                                    'i': 'mm',
-                                    's': 'ss',
-                                    'u': 'SSS',
-                                    'e': 'zz',
-                                    'I': '',
-                                    'O': '',
-                                    'P': '',
-                                    'T': '',
-                                    'Z': '',
-                                    'c': '',
-                                    'r': '',
-                                    'U': 'X',
-                                };
-
-                                return this.replace(/[A-Za-z]+/g, function (match) {
-                                    return conversions[match] || match;
-                                });
-                            }
-
-                            if ($.fn.selectpicker) {
-                                $('select').selectpicker({
-                                    style: "btn btn-info btn-sm",
-                                    dropupAuto: false,
-                                    size: 7,
-                                    with: "50%",
-                                    showTick: true
-                                });
-                            }
-
-
-                            $('input[type="text"]:not([class*="cf_date_interval"]), textarea').addClass('form-control').parents('div.meta').addClass('form-group bmd-form-group mb-3').find('label').addClass('bmd-label-floating');
-
-                            $('input.cf_date_interval').addClass('form-control').parents('div.meta').addClass('form-group bmd-form-group mb-3').find('label').addClass('col-form-label form-label date-interval-label');
-
-                            $('input[type="radio"]').addClass('form-check-input').parents('div.meta').addClass('form-check mb-3').find('li').addClass('form-check-label').append('<span class="circle"><span class="check"></span></span>');
-
-                            $('input[type="checkbox"]').addClass('form-check-input').parents('div.meta').addClass('form-check mb-4').find('label.form-check-label').append('<span class="form-check-sign"><span class="check"></span></span>');
-
-                            $('textarea').addClass('h-75');
-
-                            if ($.fn.datetimepicker) {
-                                $('.cf_date, .cf_date_interval').datetimepicker({
-                                    format: '<?php echo osc_date_format(); ?>'.toMoment(),
-                                    useCurrent: false,
-                                    icons: {
-                                        time: "fa fa-clock-o",
-                                        date: "fa fa-calendar",
-                                        up: "fa fa-chevron-up",
-                                        down: "fa fa-chevron-down",
-                                        previous: 'fa fa-chevron-left',
-                                        next: 'fa fa-chevron-right',
-                                        today: 'fa fa-screenshot',
-                                        clear: 'fa fa-trash',
-                                        close: 'fa fa-remove'
-                                    }
-                                });
-
-                                $('.cf_date').on('dp.change', function (e) {
-                                    var id = $(this).attr('id');
-                                    var date_time = e.date.unix();
-
-                                    $('#' + id + '-hidden').val(date_time);
-                                });
-
-
-                                $('.cf_date_interval').on('dp.change', function (e) {
-                                    var id = $(this).attr('id'),
-                                        slug = $(this).attr('data-slug'),
-                                        type = $(this).attr('data-type');
-
-                                    var date_time = e.date.unix();
-
-                                    $('#' + id + '-hidden').val(date_time);
-
-                                    if (type == 'from') {
-                                        $('#meta_' + slug + '_to').data("DateTimePicker").minDate(e.date);
-                                    } else {
-                                        $('#meta_' + slug + '_from').data("DateTimePicker").maxDate(e.date);
-                                    }
-                                });
-                            }
-
-
-                            $('input[type="text"], textarea').each(function () {
-                                if ($(this).val()) {
-                                    $(this).parent(".form-group").addClass("is-filled");
-                                }
-                            });
-
-                            $('input[type="text"], textarea').on("focus", function () {
-                                $(this).parent('.form-group').addClass("is-focused");
-                            }).on("blur", function () {
-                                if ($(this).val()) {
-                                    $(this).parent(".form-group").removeClass("is-focused").addClass("is-filled");
-                                } else {
-                                    $(this).parent(".form-group").removeClass("is-focused");
-                                }
-                            });
-                        }
-                    <?php endif; ?>
                 }
             });
         }
     });
-
     $(document).ready(function(){
         var cat_id = $("#catId").val();
         <?php if(OC_ADMIN) { ?>
@@ -1557,12 +1278,12 @@
         var result = '';
 
         if(cat_id != '') {
-            if(catPriceEnabled[cat_id] == 1) {
-                $("#price").closest("div").show();
-            } else {
-                $("#price").closest("div").hide();
-                $('#price').val('') ;
-            }
+			if(catPriceEnabled[cat_id] == 1) {
+				$("#price").closest("div").show();
+			} else {
+				$("#price").closest("div").hide();
+				$('#price').val('') ;
+			}
 
             $.ajax({
                 type: "POST",
@@ -1571,147 +1292,13 @@
                 dataType: 'html',
                 success: function(data){
                     $("#plugin-hook").html(data);
-
-                    <?php if(osc_get_preference('admin_theme') == 'evolution'): ?>
-                        if ($('.card-body').length) {
-                            String.prototype.toMoment = function() {
-                                var conversions = {
-                                    'd': 'DD',
-                                    'D': 'ddd',
-                                    'j': 'D',
-                                    'l': 'dddd',
-                                    'N': 'E',
-                                    'S': 'o',
-                                    'w': 'e',
-                                    'z': 'DDD',
-                                    'W': 'W',
-                                    'F': 'MMMM',
-                                    'm': 'MM',
-                                    'M': 'MMM',
-                                    'n': 'M',
-                                    't': '',
-                                    'L': '',
-                                    'o': 'YYYY',
-                                    'Y': 'YYYY',
-                                    'y': 'YY',
-                                    'a': 'a',
-                                    'A': 'A',
-                                    'B': '',
-                                    'g': 'h',
-                                    'G': 'H',
-                                    'h': 'hh',
-                                    'H': 'HH',
-                                    'i': 'mm',
-                                    's': 'ss',
-                                    'u': 'SSS',
-                                    'e': 'zz',
-                                    'I': '',
-                                    'O': '',
-                                    'P': '',
-                                    'T': '',
-                                    'Z': '',
-                                    'c': '',
-                                    'r': '',
-                                    'U': 'X',
-                                };
-
-                                return this.replace(/[A-Za-z]+/g, function(match) {
-                                    return conversions[match] || match;
-                                });
-                            }
-
-                            if($.fn.selectpicker) {
-                                $('select').selectpicker({
-                                    style: "btn btn-info btn-sm",
-                                    dropupAuto: false,
-                                    size: 7,
-                                    with: "50%",
-                                    showTick: true
-                                });
-                            }
-
-                            $('input[type="text"]:not([class*="cf_date_interval"]), textarea').addClass('form-control').parents('div.meta').addClass('form-group bmd-form-group mb-3').find('label').addClass('bmd-label-floating');
-
-                            $('input.cf_date_interval').addClass('form-control').parents('div.meta').addClass('form-group bmd-form-group mb-3').find('label').addClass('col-form-label form-label date-interval-label');
-
-                            $('input[type="radio"]').addClass('form-check-input').parents('div.meta').addClass('form-check mb-3').find('li').addClass('form-check-label').append('<span class="circle"><span class="check"></span></span>');
-
-                            $('input[type="checkbox"]').addClass('form-check-input').parents('div.meta').addClass('form-check mb-4').find('label.form-check-label').append('<span class="form-check-sign"><span class="check"></span></span>');
-
-                            $('textarea').addClass('h-75');
-
-                            if($.fn.datetimepicker) {
-                                $('.cf_date, .cf_date_interval').datetimepicker({
-                                    format: '<?php echo osc_date_format(); ?>'.toMoment(),
-                                    useCurrent: false,
-                                    icons: {
-                                        time: "fa fa-clock-o",
-                                        date: "fa fa-calendar",
-                                        up: "fa fa-chevron-up",
-                                        down: "fa fa-chevron-down",
-                                        previous: 'fa fa-chevron-left',
-                                        next: 'fa fa-chevron-right',
-                                        today: 'fa fa-screenshot',
-                                        clear: 'fa fa-trash',
-                                        close: 'fa fa-remove'
-                                    }
-                                });
-
-                                $('.cf_date').on('dp.change', function (e) {
-                                    var id = $(this).attr('id');
-                                    var date_time = e.date.unix();
-
-                                    $('#' + id + '-hidden').val(date_time);
-                                });
-
-
-                                $('.cf_date_interval').on('dp.change', function (e) {
-                                    var id = $(this).attr('id'),
-                                        slug = $(this).attr('data-slug'),
-                                        type = $(this).attr('data-type');
-
-                                    var date_time = e.date.unix();
-
-                                    $('#' + id + '-hidden').val(date_time);
-
-                                    if(type == 'from') {
-                                        $('#meta_' + slug + '_to').data("DateTimePicker").minDate(e.date);
-                                    } else {
-                                        $('#meta_' + slug + '_from').data("DateTimePicker").maxDate(e.date);
-                                    }
-                                });
-                            }
-
-                            $('.meta_date').each(function() {
-                                var slug = $(this).attr('data-slug'),
-                                    unix_time = $(this).val();
-
-                                $('#' + slug).val(date('<?php echo osc_date_format(); ?>', unix_time));
-                            });
-
-                            $('input[type="text"], textarea').each(function() {
-                                if($(this).val()) {
-                                    $(this).parent(".form-group").addClass("is-filled");
-                                }
-                            });
-
-                            $('input[type="text"], textarea').on("focus", function() {
-                                $(this).parent('.form-group').addClass("is-focused");
-                            }).on("blur", function() {
-                                if($(this).val()) {
-                                    $(this).parent(".form-group").removeClass("is-focused").addClass("is-filled");
-                                } else {
-                                    $(this).parent(".form-group").removeClass("is-focused");
-                                }
-                            });
-                        }
-                    <?php endif; ?>
                 }
             });
         }
     });
 </script>
-<div id="plugin-hook"></div>
+<div id="plugin-hook">
+</div>
 <?php
         }
 
@@ -1721,226 +1308,149 @@
 
 
         static public function ajax_photos($resources = null) {
-            if($resources==null) {
-                $resources = osc_get_item_resources();
-            }
-
+            if($resources==null) { $resources = osc_get_item_resources(); };
             $aImages = array();
-
             if( Session::newInstance()->_getForm('photos') != '' ) {
                 $aImages = Session::newInstance()->_getForm('photos');
-
                 if (isset($aImages['name'])) {
                     $aImages = $aImages['name'];
                 } else {
                     $aImages = array();
                 }
-
                 Session::newInstance()->_drop('photos');
                 Session::newInstance()->_dropKeepForm('photos');
             }
 
-            $aExt = explode(',',osc_allowed_extension());
+            ?>
+            <div id="restricted-fine-uploader"></div>
+            <div style="clear:both;"></div>
+            <?php if(count($aImages)>0 || ($resources!=null && is_array($resources) && count($resources)>0)) { ?>
+                <h3><?php _e('Images already uploaded');?></h3>
+                <ul class="qq-upload-list">
+                    <?php foreach($resources as $_r) {
+                        $img = $_r['pk_i_id'].'.'.$_r['s_extension']; ?>
+                        <li class=" qq-upload-success">
+                            <span class="qq-upload-file"><?php echo $img; ?></span>
+                            <a class="qq-upload-delete" href="#" photoid="<?php echo $_r['pk_i_id']; ?>" itemid="<?php echo $_r['fk_i_item_id']; ?>" photoname="<?php echo $_r['s_name']; ?>" photosecret="<?php echo Params::getParam('secret'); ?>" style="display: inline; cursor:pointer;"><?php _e('Delete'); ?></a>
+                            <div class="ajax_preview_img"><img src="<?php echo osc_apply_filter('resource_path', osc_base_url().$_r['s_path']).$_r['pk_i_id'].'_thumbnail.'.$_r['s_extension']; ?>" alt="<?php echo osc_esc_html($img); ?>"></div>
+                        </li>
+                    <?php }; ?>
+                    <?php foreach($aImages as $img){ ?>
+                        <li class=" qq-upload-success">
+                            <span class="qq-upload-file"><?php echo $img; $img = osc_esc_html($img); ?></span>
+                            <a class="qq-upload-delete" href="#" ajaxfile="<?php echo $img; ?>" style="display: inline; cursor:pointer;"><?php _e('Delete'); ?></a>
+                            <div class="ajax_preview_img"><img src="<?php echo osc_base_url(); ?>oc-content/uploads/temp/<?php echo $img; ?>" alt="<?php echo $img; ?>"></div>
+                            <input type="hidden" name="ajax_photos[]" value="<?php echo $img; ?>">
+                        </li>
+                    <?php } ?>
+                </ul>
+            <?php } ?>
+            <div style="clear:both;"></div>
+            <?php
 
+
+            $aExt = explode(',',osc_allowed_extension());
             foreach($aExt as $key => $value) {
-                $aExt[$key] = "'" . $value . "'";
+                $aExt[$key] = "'".$value."'";
             }
 
             $allowedExtensions = join(',', $aExt);
             $maxSize    = (int) osc_max_size_kb()*1024;
             $maxImages  = (int) osc_max_images_per_item();
-        ?>
-
-            <link rel="stylesheet" href="<?php echo osc_assets_url('js/fineuploader/fineuploader.css?v=5.16.2'); ?>">
-            <script src="<?php echo osc_assets_url('js/fineuploader/jquery.fineuploader.min.js?v=5.16.2'); ?>"></script>
-
-            <script type="text/template" id="qq-template-gallery">
-                <div class="qq-uploader-selector qq-uploader qq-gallery" qq-drop-area-text="Drop files here">
-                    <div class="qq-total-progress-bar-container-selector qq-total-progress-bar-container qq-hide">
-                        <div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" class="qq-total-progress-bar-selector qq-progress-bar qq-total-progress-bar"></div>
-                    </div>
-
-                    <div class="qq-upload-drop-area-selector qq-upload-drop-area" qq-hide-dropzone>
-                        <span class="qq-upload-drop-area-text-selector"></span>
-                    </div>
-
-                    <div class="qq-upload-button-selector qq-upload-button">
-                        <div><?php echo osc_esc_js(__('Upload a file')); ?></div>
-                    </div>
-                    <span class="qq-drop-processing-selector qq-drop-processing">
-                        <span><?php echo osc_esc_js(__('Processing...')); ?></span>
-                        <span class="qq-drop-processing-spinner-selector qq-drop-processing-spinner"></span>
-                    </span>
-
-                    <ul class="qq-upload-list-selector qq-upload-list" role="region" aria-live="polite" aria-relevant="additions removals">
-                        <li>
-                            <span role="status" class="qq-upload-status-text-selector qq-upload-status-text"></span>
-                            <div class="qq-progress-bar-container-selector qq-progress-bar-container">
-                                <div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" class="qq-progress-bar-selector qq-progress-bar"></div>
-                            </div>
-                            <span class="qq-upload-spinner-selector qq-upload-spinner"></span>
-                            <div class="qq-thumbnail-wrapper">
-                                <img class="qq-thumbnail-selector" qq-max-size="120" qq-server-scale>
-                            </div>
-                            <button type="button" class="qq-upload-cancel-selector qq-upload-cancel">X</button>
-                            <button type="button" class="qq-upload-retry-selector qq-upload-retry">
-                                <span class="qq-btn qq-retry-icon" aria-label="Retry"></span>
-                                <?php echo osc_esc_js(__('Retry')); ?>
-                            </button>
-
-                            <div class="qq-file-info">
-                                <div class="qq-file-name">
-                                    <span class="qq-upload-file-selector qq-upload-file"></span>
-                                </div>
-                                <input class="qq-edit-filename-selector qq-edit-filename" tabindex="0" type="text">
-                                <span class="qq-upload-size-selector qq-upload-size"></span>
-                                <button type="button" class="qq-btn qq-upload-delete-selector qq-upload-delete">
-                                    <span class="qq-btn qq-delete-icon" aria-label="<?php echo osc_esc_js(__('Delete')); ?>"></span>
-                                </button>
-                            </div>
-                        </li>
-                    </ul>
-
-                    <dialog class="qq-alert-dialog-selector">
-                        <div class="qq-dialog-message-selector"></div>
-                        <div class="qq-dialog-buttons">
-                            <button type="button" class="qq-cancel-button-selector">Close</button>
-                        </div>
-                    </dialog>
-
-                    <dialog class="qq-confirm-dialog-selector">
-                        <div class="qq-dialog-message-selector"></div>
-                        <div class="qq-dialog-buttons">
-                            <button type="button" class="qq-cancel-button-selector">No</button>
-                            <button type="button" class="qq-ok-button-selector">Yes</button>
-                        </div>
-                    </dialog>
-
-                    <dialog class="qq-prompt-dialog-selector">
-                        <div class="qq-dialog-message-selector"></div>
-                        <input type="text">
-                        <div class="qq-dialog-buttons">
-                            <button type="button" class="qq-cancel-button-selector">Cancel</button>
-                            <button type="button" class="qq-ok-button-selector">Ok</button>
-                        </div>
-                    </dialog>
-                </div>
-            </script>
-
-            <div id="restricted-fine-uploader"></div>
-
-            <?php if(count($aImages)>0 || ($resources!=null && is_array($resources) && count($resources) > 0)): ?>
-                <h3 class="qq-uploaded-files-header"><?php _e('Images already uploaded');?></h3>
-
-                <div class="qq-uploader-selector qq-uploader qq-gallery qq-uploaded-files">
-                    <ul class="qq-upload-list-selector qq-upload-list" role="region" aria-live="polite" aria-relevant="additions removals">
-                        <?php foreach($resources as $_r) {
-                            $img = $_r['pk_i_id'] . '.' . $_r['s_extension']; ?>
-                            <li class="qq-upload-success">
-                                <div class="qq-thumbnail-wrapper">
-                                    <img class="qq-thumbnail-selector" qq-max-size="150" qq-server-scale="" src="<?php echo osc_apply_filter('resource_path', osc_base_url() . $_r['s_path']) . $_r['pk_i_id'] . '_thumbnail.' . $_r['s_extension']; ?>" alt="<?php echo osc_esc_html($img); ?>">
-                                </div>
-
-                                <div class="qq-file-info">
-                                    <div class="qq-file-name">
-                                        <span class="qq-upload-file-selector qq-upload-file" title="<?php echo $img; ?>"><?php echo $img; ?></span>
-                                    </div>
-                                    <input class="qq-edit-filename-selector qq-edit-filename" tabindex="0" type="text">
-                                    <span class="qq-upload-size-selector qq-upload-size"></span>
-                                    <button type="button" class="qq-btn qq-upload-delete-selector qq-upload-delete" photoid="<?php echo $_r['pk_i_id']; ?>" itemid="<?php echo $_r['fk_i_item_id']; ?>" photoname="<?php echo $_r['s_name']; ?>" photosecret="<?php echo Params::getParam('secret'); ?>">
-                                        <span class="qq-btn qq-delete-icon" aria-label="<?php _e('Delete'); ?>"></span>
-                                    </button>
-                                </div>
-                            </li>
-                        <?php } ?>
-
-                        <?php foreach($aImages as $img) { ?>
-                            <li class="qq-upload-success">
-                                <div class="qq-thumbnail-wrapper">
-                                    <img class="qq-thumbnail-selector" qq-max-size="150" qq-server-scale="" src="<?php echo osc_base_url(); ?>oc-content/uploads/temp/<?php echo $img; ?>">
-                                </div>
-
-                                <div class="qq-file-info">
-                                    <div class="qq-file-name">
-                                        <span class="qq-upload-file-selector qq-upload-file" title="<?php echo $img; $img = osc_esc_html($img); ?>"><?php echo $img; ?></span>
-                                    </div>
-                                    <input class="qq-edit-filename-selector qq-edit-filename" tabindex="0" type="text">
-                                    <span class="qq-upload-size-selector qq-upload-size"></span>
-                                    <button type="button" class="qq-btn qq-upload-delete-selector qq-upload-delete" ajaxfile="<?php echo $img; ?>">
-                                        <span class="qq-btn qq-delete-icon" aria-label="<?php _e('Delete'); ?>"></span>
-                                    </button>
-                                </div>
-
-                                <input type="hidden" name="ajax_photos[]" value="<?php echo $img; ?>">
-                            </li>
-                        <?php } ?>
-                    </ul>
-                </div>
-            <?php endif; ?>
+            ?>
 
             <script>
                 $(document).ready(function() {
-                    window.removed_images = 0;
 
                     $('.qq-upload-delete').on('click', function(evt) {
                         evt.preventDefault();
-                        var parent = $(this).parents('.qq-upload-success');
+                        var parent = $(this).parent()
                         var result = confirm('<?php echo osc_esc_js( __("This action can't be undone. Are you sure you want to continue?") ); ?>');
                         var urlrequest = '';
-
-                        if($(this).attr('ajaxfile') != undefined) {
-                            urlrequest = 'ajax_photo=' + $(this).attr('ajaxfile');
+                        if($(this).attr('ajaxfile')!=undefined) {
+                            urlrequest = 'ajax_photo='+$(this).attr('ajaxfile');
                         } else {
-                            urlrequest = 'id=' + $(this).attr('photoid') + '&item=' + $(this).attr('itemid') + '&code=' + $(this).attr('photoname') + '&secret=' + $(this).attr('photosecret');
+                            urlrequest = 'id='+$(this).attr('photoid')+'&item='+$(this).attr('itemid')+'&code='+$(this).attr('photoname')+'&secret='+$(this).attr('photosecret');
                         }
-
                         if(result) {
                             $.ajax({
                                 type: "POST",
-                                url: '<?php echo osc_base_url(true); ?>?page=ajax&action=delete_image&' + urlrequest,
+                                url: '<?php echo osc_base_url(true); ?>?page=ajax&action=delete_image&'+urlrequest,
                                 dataType: 'json',
                                 success: function(data){
-                                    parent.slideUp();
+                                    parent.remove();
                                 }
                             });
                         }
                     });
 
-                    $('#restricted-fine-uploader').on('click', 'button.qq-upload-delete', function(event) {
-                        window.removed_images = window.removed_images + 1;
+                    $('#restricted-fine-uploader').on('click','.primary_image', function(event){
+                        if(parseInt($("div.primary_image").index(this))>0){
 
-                        $('#restricted-fine-uploader .flashmessage-error').remove();
-                    });
-
-                    $('#restricted-fine-uploader').on('click','.make_primary', function(event){
-                        if(parseInt($("a.primary_image").index(this)) > 0) {
-                            var a_src   = $(this).parents('.qq-upload-success').find('.qq-thumbnail-wrapper img').attr('src');
-                            var a_input = $(this).parents('.qq-upload-success').find('input[name="ajax_photos[]"]').val();
-                            var a1 = $(this).parents('.qq-upload-success').find('span.qq-upload-file').text();
-                            var a2 = $(this).parents('.qq-upload-success').find('span.qq-upload-size').text();
+                            var a_src   = $(this).parent().find('.ajax_preview_img img').attr('src');
+                            var a_title = $(this).parent().find('.ajax_preview_img img').attr('alt');
+                            var a_input = $(this).parent().find('input').attr('value');
+                            // info
+                            var a1 = $(this).parent().find('span.qq-upload-file').text();
+                            var a2 = $(this).parent().find('span.qq-upload-size').text();
 
                             var li_first =  $('ul.qq-upload-list li').get(0);
 
-                            var b_src   = $(li_first).find('.qq-thumbnail-wrapper img').attr('src');
-                            var b_input = $(li_first).find('input[name="ajax_photos[]"]').val();
+                            var b_src   = $(li_first).find('.ajax_preview_img img').attr('src');
+                            var b_title = $(li_first).find('.ajax_preview_img img').attr('alt');
+                            var b_input = $(li_first).find('input').attr('value');
                             var b1      = $(li_first).find('span.qq-upload-file').text();
                             var b2      = $(li_first).find('span.qq-upload-size').text();
 
-                            $(li_first).find('.qq-thumbnail-wrapper img').attr('src', a_src);
-                            $(li_first).find('input[name="ajax_photos[]"]').val(a_input);
+                            $(li_first).find('.ajax_preview_img img').attr('src', a_src);
+                            $(li_first).find('.ajax_preview_img img').attr('alt', a_title);
+                            $(li_first).find('input').attr('value', a_input);
                             $(li_first).find('span.qq-upload-file').text(a1);
                             $(li_first).find('span.qq-upload-size').text(a2);
 
-                            $(this).parents('.qq-upload-success').find('.qq-thumbnail-wrapper img').attr('src', b_src);
-                            $(this).parents('.qq-upload-success').find('input[name="ajax_photos[]"]').val(b_input);
-                            $(this).parents('.qq-upload-success').find('span.qq-upload-file').text(b1);
-                            $(this).parents('.qq-upload-success').find('span.qq-upload-size').text(b2);
+                            $(this).parent().find('.ajax_preview_img img').attr('src', b_src);
+                            $(this).parent().find('.ajax_preview_img img').attr('alt', b_title);
+                            $(this).parent().find('input').attr('value', b_input);
+                            $(this).parent().find('span.qq-upload-file').text(b1);
+                            $(this).parent().find('span.qq-upload-file').text(b2);
                         }
                     });
 
-                    new qq.FineUploader({
-                        element: document.getElementById("restricted-fine-uploader"),
-                        template: 'qq-template-gallery',
+                    $('#restricted-fine-uploader').on('click','.primary_image', function(event){
+                        $(this).addClass('over primary');
+                    });
+
+                    $('#restricted-fine-uploader').on('mouseenter mouseleave','.primary_image', function(event){
+                        if(event.type=='mouseenter') {
+                            if(!$(this).hasClass('primary')) {
+                                $(this).addClass('primary');
+                            }
+                        } else {
+                            if(parseInt($("div.primary_image").index(this))>0){
+                                $(this).removeClass('primary');
+                            }
+                        }
+                    });
+
+
+                    $('#restricted-fine-uploader').on('mouseenter mouseleave','li.qq-upload-success', function(event){
+                        if(parseInt($("li.qq-upload-success").index(this))>0){
+
+                            if(event.type=='mouseenter') {
+                                $(this).find('div.primary_image').addClass('over');
+                            } else {
+                                $(this).find('div.primary_image').removeClass('over');
+                            }
+                        }
+                    });
+
+                    window.removed_images = 0;
+                    $('#restricted-fine-uploader').on('click', 'a.qq-upload-delete', function(event) {
+                        window.removed_images = window.removed_images+1;
+                        $('#restricted-fine-uploader .flashmessage-error').remove();
+                    });
+
+                    $('#restricted-fine-uploader').fineUploader({
                         request: {
                             endpoint: '<?php echo osc_base_url(true)."?page=ajax&action=ajax_upload"; ?>'
                         },
@@ -1976,97 +1486,77 @@
                             deleteButton: '<?php echo osc_esc_js(__('Delete')); ?>',
                             deletingStatusText: '<?php echo osc_esc_js(__('Deleting...')); ?>',
                             formatProgress: '<?php echo osc_esc_js(__('{percent}% of {total_size}')); ?>'
-                        },
-                        callbacks: {
-                            onTotalProgress: function(totalUploadedBytes, totalBytes) {
-                                $('.qq-total-progress-bar-container-selector, .qq-drop-processing-selector').removeClass('qq-hide');
-                                $('.qq-total-progress-bar-container-selector div').width((totalUploadedBytes / totalBytes) * 100);
-                            },
-                            onStatusChange: function() {
-                                setTimeout(function() {
-                                    $(".flashmessage.flashmessage-error").remove();
-                                }, 2500);
-                            },
-                            onComplete: function(id, name, responseJSON, xhr) {
-                                if (responseJSON.success) {
-                                    var new_id = id - removed_images;
-                                    var li = $('.qq-upload-list li')[new_id];
-                                    <?php if(Params::getParam('action')=='item_add') { ?>
-                                    if(parseInt(new_id)==0) {
-                                        $(li).find('.qq-file-info').append('<a class="qq-btn primary_image primary" title="<?php echo osc_esc_js(osc_esc_html(__('Primary image'))); ?>"></a>');
-                                    } else {
-                                        $(li).find('.qq-file-info').append('<a class="qq-btn primary_image make_primary" title="<?php echo osc_esc_js(osc_esc_html(__('Make primary image'))); ?>"></a>');
-                                    }
-                                    <?php }
-
-                                    // @TOFIX @FIXME escape $responseJSON_uploadName below
-                                    // need a js function similar to osc_esc_js(osc_esc_html()) ?>
-                                    $(li).append('<input type="hidden" name="ajax_photos[]" value="'+responseJSON.uploadName+'"></input>');
-                                }
-
-                                $('.qq-drop-processing-selector').addClass('qq-hide');
-                            },
-                            onDeleteComplete: function() {
-                                var imgCount = $('.qq-upload-list li.qq-upload-success').length;
-
-                                if(imgCount == 0) {
-                                    $('.qq-uploader-selector').attr('qq-drop-area-text', '<?php echo osc_esc_js(osc_esc_html(__('Drop files here'))); ?>')
-                                }
-                            },
-                            <?php if(Params::getParam('action') == 'item_edit'): ?>
-                            onValidateBatch: function(fileOrBlobDataArray, buttonContainer) {
-                                var len = fileOrBlobDataArray.length;
-                                var result = canContinue(len);
-
-                                return result.success;
-                            },
-                            <?php endif; ?>
-                            onError: function() {
-                                setTimeout(function() {
-                                    $('.qq-total-progress-bar-container').addClass('qq-hide');
-                                    $('.qq-drop-processing-selector').addClass('qq-hide');
-                                }, 1);
-                            }
                         }
+                    }).on('error', function (event, id, name, errorReason, xhrOrXdr) {
+                            $('#restricted-fine-uploader .flashmessage-error').remove();
+                            $('#restricted-fine-uploader').append('<div class="flashmessage flashmessage-error">' + errorReason + '<a class="close" onclick="javascript:$(\'.flashmessage-error\').remove();" >X</a></div>');
+                    }).on('statusChange', function(event, id, old_status, new_status) {
+                        $(".alert.alert-error").remove();
+                    }).on('complete', function(event, id, fileName, responseJSON) {
+                        if (responseJSON.success) {
+                            var new_id = id - removed_images;
+                            var li = $('.qq-upload-list li')[new_id];
+                            <?php if(Params::getParam('action')=='item_add') { ?>
+                            if(parseInt(new_id)==0) {
+                                $(li).append('<div class="primary_image primary"></div>');
+                            } else {
+                                $(li).append('<div class="primary_image"><a title="<?php echo osc_esc_js(osc_esc_html(__('Make primary image'))); ?>"></a></div>');
+                            }
+                            <?php }
+                            // @TOFIX @FIXME escape $responseJSON_uploadName below
+                            // need a js function similar to osc_esc_js(osc_esc_html()) ?>
+                            $(li).append('<div class="ajax_preview_img"><img src="<?php echo osc_base_url(); ?>oc-content/uploads/temp/'+responseJSON.uploadName+'" alt="' + responseJSON.uploadName + '"></div>');
+                            $(li).append('<input type="hidden" name="ajax_photos[]" value="'+responseJSON.uploadName+'"></input>');
+                        }
+                        <?php if(Params::getParam('action')=='item_edit') { ?>
+                    }).on('validateBatch', function(event, fileOrBlobDataArray) {
+                        // clear alert messages
+                        if($('#restricted-fine-uploader .alert-error').size()>0) {
+                            $('#restricted-fine-uploader .alert-error').remove();
+                        }
+
+                        var len = fileOrBlobDataArray.length;
+                        var result = canContinue(len);
+                        return result.success;
+
                     });
+
+                    function canContinue(numUpload) {
+                        // strUrl is whatever URL you need to call
+                        var strUrl      = "<?php echo osc_base_url(true)."?page=ajax&action=ajax_validate&id=".osc_item_id()."&secret=".osc_item_secret(); ?>";
+                        var strReturn   = {};
+
+                        jQuery.ajax({
+                            url: strUrl,
+                            success: function(html) {
+                                strReturn = html;
+                            },
+                            async:false
+                        });
+                        var json  = JSON.parse(strReturn);
+                        var total = parseInt(json.count) + $("#restricted-fine-uploader input[name='ajax_photos[]']").size() + (numUpload);
+                        <?php if($maxImages>0) { ?>
+                            if(total<=<?php echo $maxImages;?>) {
+                                json.success = true;
+                            } else {
+                                json.success = false;
+                                $('#restricted-fine-uploader .qq-uploader').after($('<div class="alert alert-error"><?php echo osc_esc_js(sprintf(__('Too many items were uploaded. Item limit is %d.'), $maxImages)); ?></div>'));
+                            }
+                        <?php } else { ?>
+                            json.success = true;
+                        <?php }; ?>
+                        return json;
+                    }
+
+                    <?php } else { ?>
+                });
+                <?php } ?>
                 });
 
-                function canContinue(numUpload) {
-                    // strUrl is whatever URL you need to call
-                    var strUrl      = "<?php echo osc_base_url(true)."?page=ajax&action=ajax_validate&id=".osc_item_id()."&secret=".osc_item_secret(); ?>";
-                    var strReturn   = {};
-
-                    jQuery.ajax({
-                        url: strUrl,
-                        success: function(html) {
-                            strReturn = html;
-                        },
-                        async: false
-                    });
-
-                    var json  = JSON.parse(strReturn);
-                    var total = parseInt(json.count) + $("#restricted-fine-uploader input[name='ajax_photos[]']").size() + (numUpload);
-
-                    <?php if($maxImages > 0) { ?>
-                        if(total <= <?php echo $maxImages;?>) {
-                            json.success = true;
-                        } else {
-                            json.success = false;
-
-                            $('#restricted-fine-uploader .qq-total-progress-bar-container').remove();
-                            $('#restricted-fine-uploader .qq-drop-processing-selector').remove();
-
-                            $('#restricted-fine-uploader .qq-uploader').after($('<div class="flashmessage flashmessage-error"><?php echo osc_esc_js(sprintf(__('Too many items were uploaded. Item limit is %d.'), $maxImages)); ?></div>'));
-                        }
-                    <?php } else { ?>
-                        json.success = true;
-                    <?php } ?>
-
-                    return json;
-                }
             </script>
+        <?php
+        }
 
-        <?php }
     }
 
 ?>

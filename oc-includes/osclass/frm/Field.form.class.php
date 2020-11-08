@@ -44,92 +44,89 @@
         }
 
         static public function initDatePicker($id_field, $dateFormat, $value, $type='none') {
-            if(!OC_ADMIN || (OC_ADMIN && osc_get_preference('admin_theme') == 'modern')) {
-                if ($value == '') {
-                    $value = 0;
-                }
-                $aux = <<<FB
-                <script type="text/javascript">
-                $(document).ready(function(){
-                    $('.$id_field').datepicker({
-                        onSelect: function() {
-                            // format to unix timestamp
-                            var fecha = $(this).datepicker('getDate');
-                            if('$type'=='from') {
-                                fecha.setHours('0');
-                                fecha.setMinutes('0');
-                                fecha.setSeconds('0');
-                            } else if('$type'=='to') {
-                                fecha.setHours('23');
-                                fecha.setMinutes('59');
-                                fecha.setSeconds('59');
-                            }
-    
-                            // new date format
-                            var new_date = date('$dateFormat', fecha.getTime()/1000 );
-                            // hack - same dateformat as php date function
-                            $('.$id_field').prop('value', new_date);
-                            $('#$id_field').prop('value', fecha.getTime()/1000);
-                        },
-                        inline: true,
-                        navigationAsDateFormat: true,
-                        dateFormat: '@' // javascript timestamp
-                    });
-                    $.datepicker.setDefaults($.datepicker.regional['custom']);
-    
-                    if($value>0 && $value!='') {
-                        // hack - same dateformat as php date function
-                        $('.$id_field').prop('value', date('$dateFormat', $value));
-                        $('#$id_field').prop('value', '$value');
-                    }
-    
-                    $(".$id_field").change( function () {
-                        if($(".$id_field").prop('value') == '') {
-                            $('#$id_field').prop('value', '');
+
+            if($value=='') $value = 0;
+            $aux = <<<FB
+            <script type="text/javascript">
+            $(document).ready(function(){
+                $('.$id_field').datepicker({
+                    onSelect: function() {
+                        // format to unix timestamp
+                        var fecha = $(this).datepicker('getDate');
+                        if('$type'=='from') {
+                            fecha.setHours('0');
+                            fecha.setMinutes('0');
+                            fecha.setSeconds('0');
+                        } else if('$type'=='to') {
+                            fecha.setHours('23');
+                            fecha.setMinutes('59');
+                            fecha.setSeconds('59');
                         }
-                    });
-                    });
-                </script>
+
+                        // new date format
+                        var new_date = date('$dateFormat', fecha.getTime()/1000 );
+                        // hack - same dateformat as php date function
+                        $('.$id_field').prop('value', new_date);
+                        $('#$id_field').prop('value', fecha.getTime()/1000);
+                    },
+                    inline: true,
+                    navigationAsDateFormat: true,
+                    dateFormat: '@' // javascript timestamp
+                });
+                $.datepicker.setDefaults($.datepicker.regional['custom']);
+
+                if($value>0 && $value!='') {
+                    // hack - same dateformat as php date function
+                    $('.$id_field').prop('value', date('$dateFormat', $value));
+                    $('#$id_field').prop('value', '$value');
+                }
+
+                $(".$id_field").change( function () {
+                    if($(".$id_field").prop('value') == '') {
+                        $('#$id_field').prop('value', '');
+                    }
+                });
+                });
+            </script>
 FB;
-                echo $aux;
-            }
+            echo  $aux;
         }
 
         static public function primary_input_hidden($field = null) {
             if(isset($field['pk_i_id'])) {
-                parent::generic_input_hidden("id", $field["pk_i_id"], $field["pk_i_id"]);
+                parent::generic_input_hidden("id", $field["pk_i_id"]);
             }
         }
 
-        static public function name_input_text($field = null, $class = '', $id = '') {
-            parent::generic_input_text("s_name", (isset($field) && isset($field["s_name"])) ? $field["s_name"] : "", null, false, false, $class, $id);
+        static public function name_input_text($field = null) {
+            parent::generic_input_text("s_name", (isset($field) && isset($field["s_name"])) ? $field["s_name"] : "", null, false);
             return true;
         }
 
-        static public function options_input_text($field = null, $class = '', $id = '') {
-            parent::generic_input_text("s_options", (isset($field) && isset($field["s_options"])) ? html_entity_decode($field["s_options"]) : "", null, false, false, $class, $id);
+        static public function options_input_text($field = null) {
+            parent::generic_input_text("s_options", (isset($field) && isset($field["s_options"])) ? html_entity_decode($field["s_options"]) : "", null, false);
             return true;
         }
 
-        static public function required_checkbox($field = null, $class = '', $id = '') {
-            parent::generic_input_checkbox('field_required', 1, ($field!=null && isset($field['b_required']) && $field['b_required']==1) ? true : false, $class, $id);
+        static public function required_checkbox($field = null) {
+            parent::generic_input_checkbox('field_required', 1, ($field!=null && isset($field['b_required']) && $field['b_required']==1)?true:false);
         }
 
-        static public function searchable_checkbox($field = null, $class = '', $id = '') {
-            parent::generic_input_checkbox('field_searchable', 1, ($field!=null && isset($field['b_searchable']) && $field['b_searchable']==1) ? true: false, $class, $id);
+        static public function searchable_checkbox($field = null) {
+            parent::generic_input_checkbox('field_searchable', 1, ($field!=null && isset($field['b_searchable']) && $field['b_searchable']==1)?true:false);
         }
 
-        static public function type_select($field = null, $class = '', $attr = '') {
+        static public function type_select($field = null) {
             ?>
-            <select name="field_type" <?php echo $class != '' ? 'class="' . $class . '"' : ''; ?> <?php echo  $attr; ?> id="field_type">
-                <option value="TEXT" <?php if($field != null && $field['e_type'] == "TEXT") { echo 'selected="selected"';};?>><?php _e('TEXT'); ?></option>
-                <option value="TEXTAREA" <?php if($field != null && $field['e_type'] == "TEXTAREA") { echo 'selected="selected"';};?>><?php _e('TEXTAREA'); ?></option>
-                <option value="DROPDOWN" <?php if($field != null && $field['e_type'] == "DROPDOWN") { echo 'selected="selected"';};?>><?php _e('DROPDOWN'); ?></option>
-                <option value="RADIO" <?php if($field != null && $field['e_type'] == "RADIO") { echo 'selected="selected"';};?>><?php _e('RADIO'); ?></option>
-                <option value="CHECKBOX" <?php if($field != null && $field['e_type'] == "CHECKBOX") { echo 'selected="selected"';};?>><?php _e('CHECKBOX'); ?></option>
-                <option value="URL" <?php if($field != null && $field['e_type'] == "URL") { echo 'selected="selected"';};?>><?php _e('URL'); ?></option>
-                <option value="DATE" <?php if($field != null && $field['e_type'] == "DATE") { echo 'selected="selected"';};?>><?php _e('DATE'); ?></option>
-                <option value="DATEINTERVAL" <?php if($field != null && $field['e_type'] == "DATEINTERVAL") { echo 'selected="selected"';};?>><?php _e('DATE INTERVAL'); ?></option>
+            <select name="field_type" id="field_type">
+                <option value="TEXT" <?php if($field['e_type']=="TEXT") { echo 'selected="selected"';};?>><?php _e('TEXT'); ?></option>
+                <option value="TEXTAREA" <?php if($field['e_type']=="TEXTAREA") { echo 'selected="selected"';};?>><?php _e('TEXTAREA'); ?></option>
+                <option value="DROPDOWN" <?php if($field['e_type']=="DROPDOWN") { echo 'selected="selected"';};?>><?php _e('DROPDOWN'); ?></option>
+                <option value="RADIO" <?php if($field['e_type']=="RADIO") { echo 'selected="selected"';};?>><?php _e('RADIO'); ?></option>
+                <option value="CHECKBOX" <?php if($field['e_type']=="CHECKBOX") { echo 'selected="selected"';};?>><?php _e('CHECKBOX'); ?></option>
+                <option value="URL" <?php if($field['e_type']=="URL") { echo 'selected="selected"';};?>><?php _e('URL'); ?></option>
+                <option value="DATE" <?php if($field['e_type']=="DATE") { echo 'selected="selected"';};?>><?php _e('DATE'); ?></option>
+                <option value="DATEINTERVAL" <?php if($field['e_type']=="DATEINTERVAL") { echo 'selected="selected"';};?>><?php _e('DATE INTERVAL'); ?></option>
             </select>
             <?php
             return true;
@@ -137,7 +134,7 @@ FB;
 
         static public function meta($field = null, $search = false) {
 
-            if($field != null) {
+            if($field!=null) {
                 // date interval
                 if($field['e_type']=='DATEINTERVAL') {
                     $field['s_value'] = array();
@@ -226,15 +223,8 @@ FB;
                     }
                 } else if($field['e_type']=="CHECKBOX") {
                     if(isset($field) && isset($field['s_options'])) {
-                        if(!OC_ADMIN || (OC_ADMIN && osc_get_preference('admin_theme') == 'modern')) {
-                            echo '<input type="checkbox" name="meta['.$field['pk_i_id'].']" id="meta_' . $field['s_slug'] .'" value="1"'.((isset($field) && isset($field['s_value']) && $field['s_value']==1)?' checked="checked"':'').' />';
-                            echo '<label for="meta_'.$field['s_slug'].'">'. $field['s_name'].' </label>';
-                        } else {
-                            echo '<label class="form-check-label">';
-                            echo '<input type="checkbox" name="meta['.$field['pk_i_id'].']" id="meta_' . $field['s_slug'] .'" value="1"'.((isset($field) && isset($field['s_value']) && $field['s_value']==1)?' checked="checked"':'').' />';
-                            echo  $field['s_name'];
-                            echo '</label>';
-                        }
+                        echo '<input type="checkbox" name="meta['.$field['pk_i_id'].']" id="meta_' . $field['s_slug'] .'" value="1"'.((isset($field) && isset($field['s_value']) && $field['s_value']==1)?' checked="checked"':'').' />';
+                        echo '<label for="meta_'.$field['s_slug'].'">'. $field['s_name'].' </label>';
                     }
                 } else if($field['e_type']=="DATE") {
                     if($search) {
@@ -243,15 +233,8 @@ FB;
                         echo '<label for="meta_'.$field['s_slug'].'">'.$field['s_name'].': </label>';
                     }
                     // timestamp/1000 (javascript timestamp)
-
-                    if(osc_get_preference('admin_theme') == 'evolution' && OC_ADMIN) {
-                        echo '<input type="hidden" id="meta_' . $field['s_slug'] . '-hidden" class="meta_date" data-slug="meta_' . $field['s_slug'] . '" name="meta['.$field['pk_i_id'].']" value="' . $field['s_value'] . '" />';
-                        echo '<input type="text" id="meta_' . $field['s_slug'] . '" class="meta_' . $field['s_slug'] . ' cf_date" value="" />';
-                    } else {
-                        echo '<input type="hidden" id="meta_'.$field['s_slug'].'" name="meta['.$field['pk_i_id'].']" value="" />';
-                        echo '<input type="text" id="" class="meta_'.$field['s_slug'].' cf_date" value="" />';
-                    }
-
+                    echo '<input type="hidden" id="meta_'.$field['s_slug'].'" name="meta['.$field['pk_i_id'].']" value="" />';
+                    echo '<input type="text" id="" class="meta_'.$field['s_slug'].' cf_date" value="" />';
                     FieldForm::initDatePicker('meta_'.$field['s_slug'], osc_date_format(), $field['s_value']);
 
                 } else if($field['e_type']=="DATEINTERVAL") {
@@ -261,25 +244,16 @@ FB;
                         echo '<label for="meta_'.$field['s_slug'].'">'.$field['s_name'].': </label>';
                     }
 
-                    if(!OC_ADMIN || (OC_ADMIN && osc_get_preference('admin_theme') == 'modern')) {
-                        echo __('from'). ' ';
-                        echo '<input type="hidden" id="meta_'.$field['s_slug'].'_from" name="meta['.$field['pk_i_id'].'][from]" value="'.$field['s_value']['from'].'" />';
-                        echo '<input type="text" id="" class="meta_'.$field['s_slug'].'_from cf_date_interval" value="" />';
-                        FieldForm::initDatePicker('meta_'.$field['s_slug'].'_from', osc_date_format(), $field['s_value']['from'], 'from');
+                    echo __('from'). ' ';
+                    echo '<input type="hidden" id="meta_'.$field['s_slug'].'_from" name="meta['.$field['pk_i_id'].'][from]" value="'.$field['s_value']['from'].'" />';
+                    echo '<input type="text" id="" class="meta_'.$field['s_slug'].'_from cf_date_interval" value="" />';
+                    FieldForm::initDatePicker('meta_'.$field['s_slug'].'_from', osc_date_format(), $field['s_value']['from'], 'from');
 
-                        echo ' ' . __('to'). ' ';
-                        echo '<input type="hidden" id="meta_'.$field['s_slug'].'_to" name="meta['.$field['pk_i_id'].'][to]" value="'.$field['s_value']['to'].'" />';
-                        echo '<input type="text" id="" class="meta_'.$field['s_slug'].'_to cf_date_interval" value="" />';
-                        FieldForm::initDatePicker('meta_'.$field['s_slug'].'_to', osc_date_format(), $field['s_value']['to'], 'to');
-                    } else {
-                        echo '<input type="hidden" id="meta_'.$field['s_slug'].'_from-hidden" class="meta_date" data-slug="meta_' . $field['s_slug'] . '_from" name="meta['.$field['pk_i_id'].'][from]" value="'.$field['s_value']['from'].'" />';
-                        echo '<span class="text-muted">' . __('from'). '</span> ';
-                        echo '<input type="text" id="meta_'.$field['s_slug'].'_from" data-slug="'.$field['s_slug'].'" data-type="from" class="meta_'.$field['s_slug'].'_from cf_date_interval w-25 d-inline ml-xl-3 mr-xl-3" value="" />';
+                    echo ' ' . __('to'). ' ';
+                    echo '<input type="hidden" id="meta_'.$field['s_slug'].'_to" name="meta['.$field['pk_i_id'].'][to]" value="'.$field['s_value']['to'].'" />';
+                    echo '<input type="text" id="" class="meta_'.$field['s_slug'].'_to cf_date_interval" value="" />';
+                    FieldForm::initDatePicker('meta_'.$field['s_slug'].'_to', osc_date_format(), $field['s_value']['to'], 'to');
 
-                        echo '<input type="hidden" id="meta_'.$field['s_slug'].'_to-hidden" class="meta_date" data-slug="meta_' . $field['s_slug'] . '_to" name="meta['.$field['pk_i_id'].'][to]" value="'.$field['s_value']['to'].'" />';
-                        echo ' <span class="text-muted">' . __('to'). '</span> ';
-                        echo '<input type="text" id="meta_'.$field['s_slug'].'_to" data-slug="'.$field['s_slug'].'" data-type="to" class="meta_'.$field['s_slug'].'_to cf_date_interval w-25 d-inline ml-xl-3 mr-xl-3" value="" />';
-                    }
                 } else {
                     if($search) {
                         echo '<h6>'.$field['s_name'].'</h6>';

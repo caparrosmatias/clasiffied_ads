@@ -116,7 +116,6 @@
          */
         private $connErrorDesc  = 0;
 
-        public $connId;
 
         /** A list of incompatible SQL modes.
     	 *
@@ -283,8 +282,8 @@
                 }
 
                 require_once LIB_PATH . 'osclass/helpers/hErrors.php';
-                $title    = 'Osclass Evolution &raquo; Error';
-                $message  = 'Osclass database server is not available. <a href="https://forum.osclass-evo.com/" target="_blank">Need more help?</a></p>';
+                $title    = 'Osclass &raquo; Error';
+                $message  = 'Osclass database server is not available. <a href="http://forums.osclass.org/">Need more help?</a></p>';
                 osc_die($title, $message);
             }
 
@@ -297,7 +296,6 @@
             }
 
             $selectDb = $this->selectOsclassDb();
-
             if ( $selectDb == false ) {
                 $this->errorReport();
                 $this->releaseOsclassDb();
@@ -307,8 +305,8 @@
                 }
 
                 require_once LIB_PATH . 'osclass/helpers/hErrors.php';
-                $title    = 'Osclass Evolution &raquo; Error';
-                $message  = 'Osclass database is not available. <a href="https://forum.osclass-evo.com">Need more help?</a></p>';
+                $title    = 'Osclass &raquo; Error';
+                $message  = 'Osclass database is not available. <a href="http://forums.osclass.org/">Need more help?</a></p>';
                 osc_die($title, $message);
             }
 
@@ -458,15 +456,14 @@
         function _connectToDb($host, $user, $password, &$connId)
         {
             if( OSC_DEBUG ) {
-                $this->connId = $connId = new mysqli($host, $user, $password);
+                $connId = new mysqli($host, $user, $password);
             } else {
-                $this->connId = $connId = @new mysqli($host, $user, $password);
+                $connId = @new mysqli($host, $user, $password);
             }
 
             if ( $connId->connect_errno ) {
                 return false;
             }
-
             $this->set_sql_mode(array(), $connId);
             return true;
         }

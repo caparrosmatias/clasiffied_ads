@@ -26,20 +26,20 @@
 <form name="_xclick" action="https://www.paypal.com/in/cgi-bin/webscr" method="post" class="nocsrf">
     <input type="hidden" name="cmd" value="_donations">
     <input type="hidden" name="rm" value="2">
-    <input type="hidden" name="business" value="donate@osclass.market">
-    <input type="hidden" name="item_name" value="Osclass Evolution">
-    <input type="hidden" name="return" value="https://osclass-evo.com/">
+    <input type="hidden" name="business" value="info@osclass.org">
+    <input type="hidden" name="item_name" value="Osclass project">
+    <input type="hidden" name="return" value="http://osclass.org/paypal/">
     <input type="hidden" name="currency_code" value="USD">
     <input type="hidden" name="lc" value="US" />
     <input type="hidden" name="custom" value="<?php echo osc_admin_render_theme_url('oc-content/themes/bender/admin/settings.php'); ?>&donation=successful&source=bender">
-    <div id="flashmessage" class="flashmessage flashmessage-inline flashmessage-warning" style="color: #fff; display: block; ">
-        <p><?php _e('I would like to contribute to the development of Osclass Evolution with a donation of', 'bender'); ?> <select name="amount" class="select-box-medium">
+    <div id="flashmessage" class="flashmessage flashmessage-inline flashmessage-warning" style="color: #505050; display: block; ">
+        <p><?php _e('I would like to contribute to the development of Osclass with a donation of', 'bender'); ?> <select name="amount" class="select-box-medium">
             <option value="50">50$</option>
             <option value="25">25$</option>
             <option value="10" selected>10$</option>
             <option value="5">5$</option>
             <option value=""><?php _e('Custom', 'bender'); ?></option>
-        </select><input type="submit" class="btn btn-sm" name="submit" value="<?php echo osc_esc_html(__('Donate', 'bender')); ?>"></p>
+        </select><input type="submit" class="btn btn-mini" name="submit" value="<?php echo osc_esc_html(__('Donate', 'bender')); ?>"></p>
     </div>
 </form>
 <?php } ?>
@@ -65,8 +65,8 @@
             <div class="form-row">
                 <div class="form-label"><?php _e('Footer link', 'bender'); ?></div>
                 <div class="form-controls">
-                    <div class="form-label-checkbox"><input type="checkbox" name="footer_link" value="1" <?php echo (osc_get_preference('footer_link', 'bender') ? 'checked' : ''); ?> > <?php _e('I want to help Osclass Evolution by linking to osclass-evo.com from my site with the following text:', 'bender'); ?></div>
-                    <span class="help-box"><?php _e('This website is proudly using the <a title="Osclass Evolution web" href="https://osclass-evo.com/" target="_blank">classifieds scripts</a> software <strong>Osclass Evolution</strong>', 'bender'); ?></span>
+                    <div class="form-label-checkbox"><input type="checkbox" name="footer_link" value="1" <?php echo (osc_get_preference('footer_link', 'bender') ? 'checked' : ''); ?> > <?php _e('I want to help Osclass by linking to <a href="http://osclass.org/" target="_blank">osclass.org</a> from my site with the following text:', 'bender'); ?></div>
+                    <span class="help-box"><?php _e('This website is proudly using the <a title="Osclass web" href="http://osclass.org/">classifieds scripts</a> software <strong>Osclass</strong>', 'bender'); ?></span>
                 </div>
             </div>
             <?php } ?>

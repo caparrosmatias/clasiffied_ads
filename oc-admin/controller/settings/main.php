@@ -23,7 +23,6 @@
         {
             switch($this->action) {
                 case('check_updates'):
-                    osc_admin_toolbar_update_core(true);
                     osc_admin_toolbar_update_themes(true);
                     osc_admin_toolbar_update_plugins(true);
 
@@ -48,7 +47,6 @@
                     $sPageTitle        = Params::getParam('pageTitle');
                     $sPageDesc         = Params::getParam('pageDesc');
                     $sContactEmail     = Params::getParam('contactEmail');
-                    $sAdminTheme       = Params::getParam('adminTheme');
                     $sLanguage         = Params::getParam('language');
                     $sDateFormat       = Params::getParam('dateFormat');
                     $sCurrency         = Params::getParam('currency');
@@ -58,8 +56,6 @@
                     $sNumRssItems      = Params::getParam('num_rss_items');
                     $maxLatestItems    = Params::getParam('max_latest_items_at_home');
                     $numItemsSearch    = Params::getParam('default_results_per_page');
-                    $adminPagesPreloading = Params::getParam('enabled_admin_pages_preloading');
-                    $adminScrollingDraggingMouse = Params::getParam('enabled_admin_scrolling_mouse');
                     $contactAttachment = Params::getParam('enabled_attachment');
                     $selectableParent  = Params::getParam('selectable_parent_categories');
                     $bAutoCron         = Params::getParam('auto_cron');
@@ -70,7 +66,6 @@
                     $sPageTitle        = trim(strip_tags($sPageTitle));
                     $sPageDesc         = trim(strip_tags($sPageDesc));
                     $sContactEmail     = trim(strip_tags($sContactEmail));
-                    $sAdminTheme       = trim(strip_tags($sAdminTheme));
                     $sLanguage         = trim(strip_tags($sLanguage));
                     $sDateFormat       = trim(strip_tags($sDateFormat));
                     $sCurrency         = trim(strip_tags($sCurrency));
@@ -79,8 +74,6 @@
                     $sNumRssItems      = (int) trim(strip_tags($sNumRssItems));
                     $maxLatestItems    = (int) trim(strip_tags($maxLatestItems));
                     $numItemsSearch    = (int) $numItemsSearch;
-                    $adminPagesPreloading = ($adminPagesPreloading != '' ? true : false);
-                    $adminScrollingDraggingMouse = ($adminScrollingDraggingMouse != '' ? true : false);
                     $contactAttachment = ($contactAttachment != '' ? true : false);
                     $bAutoCron         = ($bAutoCron != '' ? true : false);
                     $error = "";
@@ -112,8 +105,6 @@
                     if( !defined('DEMO') ) {
                         $iUpdated += osc_set_preference('contactEmail', $sContactEmail);
                     }
-
-                    $iUpdated += osc_set_preference('admin_theme', $sAdminTheme);
                     $iUpdated += osc_set_preference('language', $sLanguage);
                     $iUpdated += osc_set_preference('dateFormat', $sDateFormat);
                     $iUpdated += osc_set_preference('currency', $sCurrency);
@@ -137,8 +128,6 @@
                     }
 
                     $iUpdated += osc_set_preference('defaultResultsPerPage@search', $numItemsSearch);
-                    $iUpdated += osc_set_preference('admin_pages_preloading', $adminPagesPreloading);
-                    $iUpdated += osc_set_preference('admin_scrolling_mouse', $adminScrollingDraggingMouse);
                     $iUpdated += osc_set_preference('contact_attachment', $contactAttachment);
                     $iUpdated += osc_set_preference('auto_cron', $bAutoCron);
                     $iUpdated += osc_set_preference('selectable_parent_categories', $selectableParent);

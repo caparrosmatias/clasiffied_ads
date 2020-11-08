@@ -55,84 +55,21 @@
 
         static public function categories_tree($categories = null, $selected = null, $depth = 0)
         {
-            if(OC_ADMIN && osc_get_preference('admin_theme') == 'evolution') {
-                if($depth) echo '<ul>';
+            if( ( $categories != null ) && is_array($categories) ) {
+                echo '<ul id="cat' . $categories[0]['fk_i_parent_id'] . '">';
 
-                foreach($categories as $key => $c) {
+                $d_string = '';
+                for($var_d = 0; $var_d < $depth; $var_d++) {
+                    $d_string .= "&nbsp;&nbsp;&nbsp;&nbsp;";
+                }
+
+                foreach($categories as $c) {
                     echo '<li>';
-
-                    if(count($c['categories'])) {
-                        echo '<i class="fa fa-plus"></i>';
-                    }
-
-                    echo '<div class="form-check">
-                                <label class="form-check-label">
-                                <input id="' . $c['pk_i_id'] . '" data-id="' . ($c['fk_i_parent_id'] ? $c['fk_i_parent_id'] : $c['pk_i_id']) . '" type="checkbox" class="form-check-input" name="categories[]" value="' . $c['pk_i_id'] . '" ' . ( in_array($c['pk_i_id'], $selected) ? 'checked="checked"' : '' ) . '>
-                                    <span class="form-check-sign">
-                                        ' . $c['s_name'] . '
-                                        <span class="check"></span>
-                                    </span>
-                                </label>
-                            </div>';
-
-                    if(count($c['categories'])) {
-                        CategoryForm::categories_tree($c['categories'], $selected, $depth + 1);
-                    }
-
+                    echo $d_string . '<input type="checkbox" name="categories[]" value="' . $c['pk_i_id'] . '" onclick="javascript:checkCat(\'' . $c['pk_i_id'] . '\', this.checked);" ' . ( in_array($c['pk_i_id'], $selected) ? 'checked="checked"' : '' ) . ' />' . ( ( $depth == 0 ) ? '<span>' : '' ) . $c['s_name'] . ( ( $depth == 0 ) ? '</span>' : '' );
+                    CategoryForm::categories_tree($c['categories'], $selected, $depth + 1);
                     echo '</li>';
                 }
-
-                if($depth) echo '</ul>';
-            } else {
-                if( ( $categories != null ) && is_array($categories) ) {
-                    echo '<ul id="cat' . $categories[0]['fk_i_parent_id'] . '">';
-
-                    $d_string = '';
-                    for($var_d = 0; $var_d < $depth; $var_d++) {
-                        $d_string .= "&nbsp;&nbsp;&nbsp;&nbsp;";
-                    }
-
-                    foreach($categories as $c) {
-                        echo '<li>';
-                        echo $d_string . '<input type="checkbox" name="categories[]" value="' . $c['pk_i_id'] . '" onclick="javascript:checkCat(\'' . $c['pk_i_id'] . '\', this.checked);" ' . ( in_array($c['pk_i_id'], $selected) ? 'checked="checked"' : '' ) . ' />' . ( ( $depth == 0 ) ? '<span>' : '' ) . $c['s_name'] . ( ( $depth == 0 ) ? '</span>' : '' );
-                        CategoryForm::categories_tree($c['categories'], $selected, $depth + 1);
-                        echo '</li>';
-                    }
-                    echo '</ul>';
-                }
-            }
-        }
-
-        static public function categories_custom_field_tree($categories = null, $selected = null, $field_id = 'new', $depth = 0)
-        {
-            if(($categories != null) && is_array($categories)) {
-                if($depth) echo '<ul>';
-
-                foreach($categories as $key => $c) {
-                    echo '<li>';
-
-                    if(count($c['categories'])) {
-                        echo '<i class="fa fa-plus"></i>';
-                    }
-
-                    echo '<div class="form-check">
-                                <label class="form-check-label">
-                                <input id="category-' . $c['pk_i_id'] . '-field-' . $field_id . '" data-id="' . ($c['fk_i_parent_id'] ? $c['fk_i_parent_id'] : $c['pk_i_id']) . '" type="checkbox" class="form-check-input" name="categories[]" value="' . $c['pk_i_id'] . '" ' . ( in_array($c['pk_i_id'], $selected) ? 'checked="checked"' : '' ) . '>
-                                    <span class="form-check-sign">
-                                        ' . $c['s_name'] . '
-                                        <span class="check"></span>
-                                    </span>
-                                </label>
-                            </div>';
-
-                    if(count($c['categories'])) {
-                        CategoryForm::categories_custom_field_tree($c['categories'], $selected, $field_id, $depth + 1);
-                    }
-
-                    echo '</li>';
-                }
-
-                if($depth) echo '</ul>';
+                echo '</ul>';
             }
         }
 
@@ -169,15 +106,12 @@
             $content = array();
             foreach($locales as $locale) {
                     $value = (isset($category['locale'][$locale['pk_c_code']])) ? $category['locale'][$locale['pk_c_code']]['s_name'] : "";
-                    $url_value = (isset($category['locale'][$locale['pk_c_code']])) ? $category['locale'][$locale['pk_c_code']]['s_slug'] : "";
                     $name = $locale['pk_c_code'] . '#s_name';
-                    $url = $locale['pk_c_code'] . '#s_slug';
                     $nameTextarea = $locale['pk_c_code'] . '#s_description';
                     $valueTextarea = (isset($category['locale'][$locale['pk_c_code']])) ? $category['locale'][$locale['pk_c_code']]['s_description'] : "";
 
                     $contentTemp  = '<div id="'.$category['pk_i_id'].'-'.$locale['pk_c_code'].'" class="category-details-form">';
                     $contentTemp .= '<div class="FormElement"><label>' . __('Name') . '</label><input id="' . $name .'" type="text" name="' . $name .'" value="' . osc_esc_html(htmlentities($value, ENT_COMPAT, "UTF-8")) . '"/></div>';
-                    $contentTemp .= '<div class="FormElement"><label>' . __('URL') . '</label><input id="' . $url .'" type="text" name="' . $url .'" value="' . osc_esc_html(htmlentities($url_value, ENT_COMPAT, "UTF-8")) . '"/></div>';
                     $contentTemp .= '<div class="FormElement"><label>' . __('Description') . '</label>';
                     $contentTemp .= '<textarea id="' . $nameTextarea . '" name="' . $nameTextarea . '" rows="10">' . $valueTextarea . '</textarea>';
                     $contentTemp .= '</div></div>';

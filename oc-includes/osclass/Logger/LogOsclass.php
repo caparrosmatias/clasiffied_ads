@@ -94,7 +94,6 @@
                         ,'fileLine' => base64_encode($caller)
                     )
             );
-
             /*require_once LIB_PATH . 'libcurlemu/libcurlemu.inc.php';
 
             $url = "admin.osclass.org/logger.php?type=$type&component=".$this->component;

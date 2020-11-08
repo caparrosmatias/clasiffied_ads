@@ -19,7 +19,7 @@
     class ManageItemsForm extends Form {
 
         // OK
-        static public function category_select($categories = null, $item = null, $default_item = null, $parent_selectable = false, $class = '', $attrs = '')
+        static public function category_select($categories = null, $item = null, $default_item = null, $parent_selectable = false)
         {
             // Did user select a specific category to post in?
             $catId = Params::getParam('catId');
@@ -32,7 +32,7 @@
                 }
             }
 
-            echo '<select name="catId" id="catId" " ' . ($class != '' ? 'class="' . $class . '"' : '') . ' ' . $attrs . '>';
+            echo '<select name="catId" id="catId">';
             if(isset($default_item)) {
                 echo '<option value="">' . $default_item . '</option>';
             } else {
@@ -81,7 +81,7 @@
             }
         }
 
-        static public function country_text($class = '')
+        static public function country_text()
         {
             // get params GET (only manageItems)
             if(Params::getParam('countryName') != '') {
@@ -89,32 +89,32 @@
                 $item['fk_c_country_code'] = Params::getParam('countryId');
             }
 
-            parent::generic_input_text('countryName', (isset($item['s_country'])) ? $item['s_country'] : null, false, false, true, $class);
-            parent::generic_input_hidden('countryId', (isset($item['fk_c_country_code']) && $item['fk_c_country_code'] != null) ? $item['fk_c_country_code'] : '');
+            parent::generic_input_text('countryName', (isset($item['s_country'])) ? $item['s_country'] : null, false, false);
+            parent::generic_input_hidden('countryId', (isset($item['fk_c_country_code']) && $item['fk_c_country_code']!=null)?$item['fk_c_country_code']:'');
             return true;
         }
 
-        static public function region_text($class = '')
+        static public function region_text()
         {
             // get params GET (only manageItems)
             if(Params::getParam('region') != '') {
                 $item['s_region'] = Params::getParam('region');
                 $item['fk_i_region_id'] = Params::getParam('regionId');
             }
-            parent::generic_input_text('region', (isset($item['s_region'])) ? $item['s_region'] : null, false, false, true, $class);
-            parent::generic_input_hidden('regionId', (isset($item['fk_i_region_id']) && $item['fk_i_region_id'] != null) ? $item['fk_i_region_id'] : '');
+            parent::generic_input_text('region', (isset($item['s_region'])) ? $item['s_region'] : null, false, false);
+            parent::generic_input_hidden('regionId', (isset($item['fk_i_region_id']) && $item['fk_i_region_id']!=null)?$item['fk_i_region_id']:'');
             return true;
         }
 
-        static public function city_text($class = '')
+        static public function city_text()
         {
             // get params GET (only manageItems)
             if(Params::getParam('city') != '') {
                 $item['s_city'] = Params::getParam('city');
                 $item['fk_i_city_id'] = Params::getParam('cityId');
             }
-            parent::generic_input_text('city', (isset($item['s_city'])) ? $item['s_city'] : null, false, false, true, $class);
-            parent::generic_input_hidden('cityId', (isset($item['fk_i_city_id']) && $item['fk_i_city_id'] != null) ? $item['fk_i_city_id'] : '');
+            parent::generic_input_text('city', (isset($item['s_city'])) ? $item['s_city'] : null, false, false);
+            parent::generic_input_hidden('cityId', (isset($item['fk_i_city_id']) && $item['fk_i_city_id']!=null)?$item['fk_i_city_id']:'');
             return true;
         }
     }

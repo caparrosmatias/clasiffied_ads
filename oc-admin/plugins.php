@@ -296,16 +296,16 @@
                         $row   = array();
                         $pInfo = osc_plugin_get_info($plugin);
 
+                        // prepare row 1
                         $installed = 0;
                         if( osc_plugin_is_installed($plugin) ) {
                             $installed = 1;
                         }
-
                         $enabled = 0;
                         if( osc_plugin_is_enabled($plugin) ) {
                             $enabled = 1;
                         }
-
+                        // prepare row 2
                         $sUpdate = '';
                         // get plugins to update from t_preference
                         if($bPluginsToUpdate) {
@@ -313,89 +313,53 @@
                                 $sUpdate = '<a class="market_update market-popup" href="#' . htmlentities($pInfo['plugin_update_uri']) . '">' . __("There's a new update available") . '</a>';
                             }
                         }
-
+                        // prepare row 4
                         $sConfigure = '';
+                        if( isset($active_plugins[$plugin . '_configure']) ) {
+                            $sConfigure = '<a href="' . osc_admin_base_url(true) . '?page=plugins&amp;action=admin&amp;plugin=' . $pInfo['filename'] . "&amp;" . osc_csrf_token_url() . '">' . __('Configure') . '</a>';
+                        }
+                        // prepare row 5
                         $sEnable = '';
+                        if( $installed ) {
+                            if( $enabled ) {
+                                $sEnable = '<a href="' . osc_admin_base_url(true) . '?page=plugins&amp;action=disable&amp;plugin=' . $pInfo['filename'] . "&amp;" . osc_csrf_token_url() . '">' . __('Disable') . '</a>';
+                            } else {
+                                $sEnable = '<a href="' . osc_admin_base_url(true) . '?page=plugins&amp;action=enable&amp;plugin=' . $pInfo['filename'] . "&amp;" . osc_csrf_token_url() . '">' . __('Enable') . '</a>';
+                            }
+                        }
+                        // prepare row 6
+                        if( $installed ) {
+                            $sInstall = '<a onclick="javascript:return uninstall_dialog(\'' . $pInfo['filename'] . '\', \'' . $pInfo['plugin_name'] . '\');" href="' . osc_admin_base_url(true) . '?page=plugins&amp;action=uninstall&amp;plugin=' . $pInfo['filename'] . "&amp;" . osc_csrf_token_url() . '">' . __('Uninstall') . '</a>';
+                        } else {
+                            $sInstall = '<a href="' . osc_admin_base_url(true) . '?page=plugins&amp;action=install&amp;plugin=' . $pInfo['filename'] . "&amp;" . osc_csrf_token_url() . '">' . __('Install') . '</a>';
+                        }
                         $sDelete = '';
-                        $sHelp = '';
-                        $sSiteUrl = '';
+                        if( !$installed ) {
+                            $sDelete =  '<a href="javascript:delete_plugin(\''.$pInfo['filename'].'\');" >' . __('Delete') . '</a>';
+                        }
 
+                        $sHelp = '';
                         if($pInfo['support_uri']!='') {
                             $sHelp = '<span class="plugin-support-icon plugin-tooltip" ><a target="_blank" href="'.osc_sanitize_url($pInfo['support_uri']).'" ><img src="'.osc_current_admin_theme_url('images/question.png').'" alt="'.osc_esc_html(__('Problems with this plugin? Ask for support.')).'" ></a></span>';
                         }
+                        $sSiteUrl = '';
+                        if($pInfo['plugin_uri']!='') {
+							$sSiteUrl = ' | <a target="_blank" href="'. $pInfo['plugin_uri'] . '">'. __('Plugins Site'). '</a>';
+						}
+						if($pInfo['author_uri']!='') {
+							$sAuthor = __('By') . ' <a target="_blank" href="'. $pInfo['author_uri'] . '">'. $pInfo['author'] . '</a>';
+						} else {
+							$sAuthor = __('By') . ' ' . $pInfo['author'];
+						}
 
-                        if($pInfo['plugin_uri']) {
-                            $sSiteUrl = '<a target="_blank" href="'. $pInfo['plugin_uri'] . '">'. __('Plugins Site'). '</a>';
-                        }
-
-                        if($pInfo['author_uri'] && $pInfo['author']) {
-                            $sAuthor = __('By') . ' <a target="_blank" href="'. $pInfo['author_uri'] . '">'. $pInfo['author'] . '</a> | ';
-                        } else {
-                            if($pInfo['author']) {
-                                $sAuthor = __('By') . ' ' . $pInfo['author'] . ' | ';
-                            } else {
-                                $sAuthor = '';
-                            }
-                        }
-
-                        if(osc_get_preference('admin_theme') == 'modern') {
-                            if( isset($active_plugins[$plugin . '_configure']) ) {
-                                $sConfigure = '<a href="' . osc_admin_base_url(true) . '?page=plugins&amp;action=admin&amp;plugin=' . $pInfo['filename'] . "&amp;" . osc_csrf_token_url() . '">' . __('Configure') . '</a>';
-                            }
-
-                            if( $installed ) {
-                                if( $enabled ) {
-                                    $sEnable = '<a href="' . osc_admin_base_url(true) . '?page=plugins&amp;action=disable&amp;plugin=' . $pInfo['filename'] . "&amp;" . osc_csrf_token_url() . '">' . __('Disable') . '</a>';
-                                } else {
-                                    $sEnable = '<a href="' . osc_admin_base_url(true) . '?page=plugins&amp;action=enable&amp;plugin=' . $pInfo['filename'] . "&amp;" . osc_csrf_token_url() . '">' . __('Enable') . '</a>';
-                                }
-                            }
-
-                            if( $installed ) {
-                                $sInstall = '<a onclick="javascript:return uninstall_dialog(\'' . $pInfo['filename'] . '\', \'' . $pInfo['plugin_name'] . '\');" href="' . osc_admin_base_url(true) . '?page=plugins&amp;action=uninstall&amp;plugin=' . $pInfo['filename'] . "&amp;" . osc_csrf_token_url() . '">' . __('Uninstall') . '</a>';
-                            } else {
-                                $sInstall = '<a href="' . osc_admin_base_url(true) . '?page=plugins&amp;action=install&amp;plugin=' . $pInfo['filename'] . "&amp;" . osc_csrf_token_url() . '">' . __('Install') . '</a>';
-                            }
-
-                            if( !$installed ) {
-                                $sDelete =  '<a href="javascript:delete_plugin(\''.$pInfo['filename'].'\');" >' . __('Delete') . '</a>';
-                            }
-
-                            $row[] = '<input type="hidden" name="installed" value="' . $installed . '" enabled="' . $enabled . '" />' . $pInfo['plugin_name'] . $sHelp . '<div>' . $sUpdate . '</div>';
-                            $row[] = $pInfo['description'] . '<br />' . __('Version:') . $pInfo['version'] . ' | ' . $sAuthor . $sSiteUrl ;
-                            $row[] = ($sUpdate!='')     ? $sUpdate      : '&nbsp;';
-                            $row[] = ($sConfigure!='')  ? $sConfigure   : '&nbsp;';
-                            $row[] = ($sEnable!='')     ? $sEnable      : '&nbsp;';
-                            $row[] = ($sInstall!='')    ? $sInstall     : '&nbsp;';
-                            $row[] = ($sDelete!='')     ? $sDelete      : '&nbsp;';
-                        } else {
-                            if( $installed ) {
-                                if( $enabled ) {
-                                    $sStatus = '<span class="badge badge-success">' . __('Active') . '</span>';
-                                    if( isset($active_plugins[$plugin . '_configure']) ) {
-                                        $sConfigure = '<a rel="tooltip" class="btn btn-warning" href="' . osc_admin_base_url(true) . '?page=plugins&amp;action=admin&amp;plugin=' . $pInfo['filename'] . "&amp;" . osc_csrf_token_url() . '" title="' . __('Configure') . '"><i class="material-icons">build</i></a></a>';
-                                    }
-                                    $sEnable = '<a rel="tooltip" class="btn btn-danger" href="' . osc_admin_base_url(true) . '?page=plugins&amp;action=disable&amp;plugin=' . $pInfo['filename'] . "&amp;" . osc_csrf_token_url() . '" title="' . __('Disable') . '"><i class="material-icons">clear</i></a>';
-                                } else {
-                                    $sStatus = '<span class="badge badge-danger">' . __('Disabled') . '</span>';
-                                    $sEnable = '<a rel="tooltip" class="btn btn-success" href="' . osc_admin_base_url(true) . '?page=plugins&amp;action=enable&amp;plugin=' . $pInfo['filename'] . "&amp;" . osc_csrf_token_url() . '" title="' . __('Enable') . '"><i class="material-icons">done</i></a>';
-                                }
-
-                                $sInstall = '<a id="plugin-uninstall" data-plugin="' . $pInfo['filename'] . '" rel="tooltip" class="btn btn-default" href="' . osc_admin_base_url(true) . '?page=plugins&amp;action=uninstall&amp;plugin=' . $pInfo['filename'] . "&amp;" . osc_csrf_token_url() . '" title="' . __('Uninstall') . '"><i class="material-icons">remove</i></a>';
-                            } else {
-                                $sStatus = '<span class="badge badge-secondary">' . __('Not installed') . '</span>';
-                                $sInstall = '<a rel="tooltip" class="btn btn-success" href="' . osc_admin_base_url(true) . '?page=plugins&amp;action=install&amp;plugin=' . $pInfo['filename'] . "&amp;" . osc_csrf_token_url() . '" title="' . __('Install') . '"><i class="material-icons">add</i></a>';
-                                $sDelete =  '<a id="listing-delete" rel="tooltip" class="btn btn-danger" data-delete-type="plugin" data-listing-id="' . $pInfo['filename'] . '" href="javascript:void(0);" title="' . __('Delete') . '"><i class="material-icons">delete</i></a>';
-                            }
-
-                            $row[] = $sStatus;
-                            $row[] = $pInfo['plugin_name'];
-                            $row[] = $pInfo['description'] . '<br />' . __('Version:') . $pInfo['version'] . ' | ' . $sAuthor . $sSiteUrl ;
-                            $row[] = $sConfigure . $sEnable . $sInstall . $sDelete;
-                        }
-
+                        $row[] = '<input type="hidden" name="installed" value="' . $installed . '" enabled="' . $enabled . '" />' . $pInfo['plugin_name'] . $sHelp . '<div>' . $sUpdate . '</div>';
+                        $row[] = $pInfo['description'] . '<br />' . __('Version:') . $pInfo['version'] . ' | ' . $sAuthor . $sSiteUrl ;
+                        $row[] = ($sUpdate!='')     ? $sUpdate      : '&nbsp;';
+                        $row[] = ($sConfigure!='')  ? $sConfigure   : '&nbsp;';
+                        $row[] = ($sEnable!='')     ? $sEnable      : '&nbsp;';
+                        $row[] = ($sInstall!='')    ? $sInstall     : '&nbsp;';
+                        $row[] = ($sDelete!='')     ? $sDelete      : '&nbsp;';
                         $aData[] = $row;
-
                         if(@$pInfo['plugin_update_uri'] != '') {
                             $aInfo[@$pInfo['plugin_update_uri']] = $pInfo;
                         } else {

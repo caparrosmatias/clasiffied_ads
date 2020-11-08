@@ -70,28 +70,11 @@
             Params::setParam('iPage', $page);
             $url_base = preg_replace('|&direction=([^&]*)|', '', preg_replace('|&sort=([^&]*)|', '', osc_base_url().Rewrite::newInstance()->get_raw_request_uri()));
 
-            if(osc_get_preference('admin_theme') == 'modern') {
-                $this->addColumn('bulkactions', '<input id="check_all" type="checkbox" />');
-                $this->addColumn('file', __('File'));
-                $this->addColumn('action', __('Action'));
-            } else {
-                $this->addColumn('bulkactions', '<div class="form-check">
-                            <label class="form-check-label">
-                                <input id="check_all" class="form-check-input" type="checkbox" />
-                                <span class="form-check-sign">
-                                    <span class="check"></span>
-                                </span>
-                            </label>
-                        </div>');
-                $this->addColumn('file', __('File'));
-            }
-
+            $this->addColumn('bulkactions', '<input id="check_all" type="checkbox" />');
+            $this->addColumn('file', __('File'));
+            $this->addColumn('action', __('Action'));
             $this->addColumn('attached_to', '<a href="'.osc_esc_html($url_base.$arg_item).'">'.__('Attached to').'</a>');
             $this->addColumn('date', '<a href="'.osc_esc_html($url_base.$arg_date).'">'.__('Date').'</a>');
-
-            if(osc_get_preference('admin_theme') == 'evolution') {
-                $this->addColumn('actions', __('Actions'));
-            }
 
             $dummy = &$this;
             osc_run_hook("admin_media_table", $dummy);
@@ -104,26 +87,9 @@
                 foreach($media as $aRow) {
                     $row = array();
 
-                    if(osc_get_preference('admin_theme') == 'modern') {
-                        $row['bulkactions'] = '<input type="checkbox" name="id[]" value="' . $aRow['pk_i_id'] . '" />';
-                        $row['action'] = '<a onclick="return delete_dialog(\'' . $aRow['pk_i_id'] . '\');" >' . __('Delete') . '</a>';
-                    } else {
-                        $row['bulkactions'] = '<div class="form-check">
-                            <label class="form-check-label">
-                                <input id="item-selected" class="form-check-input" type="checkbox" name="id[]" value="' . $aRow['pk_i_id'] . '" />
-                                <span class="form-check-sign">
-                                    <span class="check"></span>
-                                </span>
-                            </label>
-                        </div>';
-
-                        $btn_actions = '<a id="listing-delete" data-delete-type="media" data-listing-id="' . $aRow['pk_i_id'] . '" href="' . osc_admin_base_url(true) . '?page=media&amp;action=delete&amp;id[]=' . $aRow['pk_i_id'] . '" rel="tooltip" class="btn btn-danger" title="' . __('Delete') . '"><i class="material-icons">delete</i></a>';
-
-                        $row['actions'] = $btn_actions;
-                    }
-
-                    
+                    $row['bulkactions'] = '<input type="checkbox" name="id[]" value="' . $aRow['pk_i_id'] . '" />';
                     $row['file'] = '<div id="media_list_pic"><img src="' . osc_apply_filter('resource_path', osc_base_url() . $aRow['s_path']) . $aRow['pk_i_id'] . '_thumbnail.' . $aRow['s_extension'] . '" style="max-width: 60px; max-height: 60px;" /></div> <div id="media_list_filename">' . $aRow['s_content_type'];
+                    $row['action'] = '<a onclick="return delete_dialog(\'' . $aRow['pk_i_id'] . '\');" >' . __('Delete') . '</a>';
                     $row['attached_to'] = '<a target="_blank" href="' . osc_item_url_ns($aRow['fk_i_item_id']) . '">item #' . $aRow['fk_i_item_id'] . '</a>';
                     $row['date'] = osc_format_date($aRow['dt_pub_date']);
 

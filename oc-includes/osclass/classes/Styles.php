@@ -54,14 +54,6 @@ class Styles {
     }
 
     /**
-     * Print the HTML tag to load the necessary style
-     */
-    public function printStyle($id)
-    {
-        echo '<link href="' . osc_apply_filter('style_url', $this->styles[$id]) . '" rel="stylesheet" type="text/css" />' . PHP_EOL;
-    }
-
-    /**
      * Print the HTML tags to load the styles
      */
     public function printStyles()

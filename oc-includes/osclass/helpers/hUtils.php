@@ -106,16 +106,14 @@ function osc_show_widgets_by_description($description) {
  * @return void
  */
 function osc_show_recaptcha($section = '') {
-    if(osc_recaptcha_public_key()) {
-        if(osc_recaptcha_version() == '2' || osc_recaptcha_version() == '3') {
+    if( osc_recaptcha_public_key() ) {
+        if(osc_recaptcha_version()=="2") {
             switch($section) {
                 case('recover_password'):
-                    Session::newInstance()->_set('recover_captcha_not_set', 0);
-
+                    Session::newInstance()->_set('recover_captcha_not_set',0);
                     $time  = Session::newInstance()->_get('recover_time');
-
-                    if((time() - $time) <= 1200) {
-                        echo _osc_recaptcha_get_html(osc_recaptcha_public_key(), substr(osc_language(), 0, 2), osc_recaptcha_version())."<br />";
+                    if((time()-$time)<=1200) {
+                        echo _osc_recaptcha_get_html(osc_recaptcha_public_key(), substr(osc_language(), 0, 2))."<br />";
                     }
                     else{
                         Session::newInstance()->_set('recover_captcha_not_set',1);
@@ -123,42 +121,30 @@ function osc_show_recaptcha($section = '') {
                     break;
 
                 default:
-                    echo _osc_recaptcha_get_html(osc_recaptcha_public_key(), substr(osc_language(), 0, 2), osc_recaptcha_version())."<br />";
+                    echo _osc_recaptcha_get_html(osc_recaptcha_public_key(), substr(osc_language(), 0, 2))."<br />";
+                    break;
+            }
+        } else {
+            require_once osc_lib_path() . 'recaptchalib.php';
+            switch($section) {
+                case('recover_password'):
+                    $time  = Session::newInstance()->_get('recover_time');
+                    if((time()-$time)<=1200) {
+                        echo recaptcha_get_html( osc_recaptcha_public_key(), null, osc_is_ssl() )."<br />";
+                    }
+                    break;
+
+                default:
+                    echo recaptcha_get_html( osc_recaptcha_public_key(), null, osc_is_ssl() );
                     break;
             }
         }
     }
 }
 
-function _osc_recaptcha_get_html($siteKey, $lang, $version = '2') {
-    if($version == '2') {
-        echo '<div class="g-recaptcha" data-sitekey="' . $siteKey . '"></div>';
-        echo '<script type="text/javascript" src="https://www.google.com/recaptcha/api.js?hl=' . $lang . '"></script>';
-    } else if($version == '3') {
-        echo '<input id="recaptchaResponse" type="hidden" name="g-recaptcha-response">';
-        echo '<script src="https://www.google.com/recaptcha/api.js?render=' . $siteKey . '"></script>';
-        echo '<script>grecaptcha.ready(function() {grecaptcha.execute("' . $siteKey . '", {action: "recaptchaVirify"}).then(function (token) {var recaptchaResponse = document.getElementById("recaptchaResponse"); recaptchaResponse.value = token;});})</script>';
-    }
-}
-
-/**
- * Validate Google reCAPTCHA v.3
- *
- * @param string $token
- * @return boolean
- */
-function osc_recaptcha3_validate($token) {
-    $recaptcha_url = 'https://www.google.com/recaptcha/api/siteverify';
-    $recaptcha_secret = osc_recaptcha_private_key();
-
-    $recaptcha = file_get_contents($recaptcha_url . '?secret=' . $recaptcha_secret . '&response=' . $token);
-    $recaptcha = json_decode($recaptcha);
-
-    if ($recaptcha->score >= 0.7) {
-        return true;
-    }
-
-    return false;
+function _osc_recaptcha_get_html($siteKey, $lang) {
+    echo '<div class="g-recaptcha" data-sitekey="' . $siteKey . '"></div>';
+    echo '<script type="text/javascript" src="https://www.google.com/recaptcha/api.js?hl=' . $lang . '"></script>';
 }
 
 /**
@@ -289,36 +275,6 @@ function osc_highlight($txt, $len = 300, $start_tag = '<strong>', $end_tag = '</
     return $txt;
 }
 
-/**
- * Gets and count files in the current directory:
- *
- * @since Osclass Evolution 4.3.0
- *
- * @param string $dir
- * @return array
- */
-
-function osc_scan_dir($dir, &$files = array(), &$count = 1) {
-    if($d = opendir($dir)) {
-        while(false !== ($file = readdir($d))) {
-            if ($file == '.' || $file == '..')
-                continue;
-
-            if(is_dir($dir . DIRECTORY_SEPARATOR . $file)) {
-                osc_scan_dir($dir . DIRECTORY_SEPARATOR . $file, $files, $count);
-            } else {
-                $file_path = str_replace(osc_base_path(), '', $dir . DIRECTORY_SEPARATOR);
-
-                $files['files'][] = $file_path . $file;
-                $files['total_files'] = $count++;
-            }
-        }
-
-        closedir($d);
-    }
-
-    return $files;
-}
 
 /**
  *
@@ -366,76 +322,18 @@ function osc_get_subdomain_params() {
     return $options;
 }
 
-/**
- * Get an url to download the core upgrade
- */
-function osc_get_upgrade_download_url() {
-    $json = osc_file_get_contents('https://api.osclass.market/updates/core/download');
-    $url = json_decode($json, true);
-
-    return $url['download_url'];
-}
-
-function osc_upgrade_download_completed() {
-    osc_file_get_contents('https://api.osclass.market/updates/core/download_completed');
+function osc_get_locations_json_url() {
+    return 'https://raw.githubusercontent.com/Dis555/Osclass-Extras/master/locations/list.json';
 }
 
 /**
- * Get the current up-to-date core version
- */
-function osc_get_latest_core_version($digitally = true) {
-    $json = osc_file_get_contents('https://api.osclass.market/updates/core/latest_version');
-    $version = json_decode($json, true);
-
-    if($digitally) {
-        return preg_replace('#(\.)#', '', $version['version']);
-    }
-
-    return $version['version'];
-}
-
-/**
- * Get countries list
- */
-function osc_get_countries_list_api() {
-    $countries = osc_file_get_contents('https://api.osclass.market/locations/list');
-    $countries = json_decode($countries, true);
-    $countries = $countries['countries_list'];
-
-    return $countries;
-}
-
-/**
- * Get selected SQL country file
+ * Get URL of location SQL.
+ *
+ * @param string $location
+ * @return string
  */
 function osc_get_locations_sql_url($location) {
     $location = rawurlencode($location);
-
-    return 'https://api.osclass.market/location/' . $location;
-}
-
-function osc_evo_activation($type) {
-    $url = base64_encode(osc_base_url());
-
-    $data = array(
-        'url' => $url,
-        'installation_type' => $type
-    );
-
-    $request = curl_init('https://api.osclass.market/osclass-evo/activation');
-
-    curl_setopt($request, CURLOPT_SSL_VERIFYPEER, true);
-    curl_setopt($request, CURLOPT_SSL_VERIFYHOST, 2);
-    curl_setopt($request, CURLOPT_PORT, 443);
-    curl_setopt($request, CURLOPT_USERAGENT, 'osclass-evo-php/4.0');
-    curl_setopt($request, CURLOPT_POST, true);
-    curl_setopt($request, CURLOPT_POSTFIELDS, $data);
-    curl_setopt($request, CURLOPT_RETURNTRANSFER, true);
-
-    $response = curl_exec($request);
-
-    osc_set_preference('osclass_activated', 1, 'osclass', 'BOOLEAN');
-
-    return $response;
+    return 'https://raw.githubusercontent.com/Dis555/Osclass-Extras/master/locations/'.$location;
 }
 ?>

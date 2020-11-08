@@ -123,13 +123,6 @@
     }
 
     /**
-     * Print the HTML tags to make the necessary script load
-     */
-    function osc_load_script($id) {
-        Scripts::newInstance()->printScript($id);
-    }
-
-    /**
      * Print the HTML tags to make the script load
      */
     function osc_load_scripts() {
@@ -161,21 +154,14 @@
     }
 
     /**
-     * Print the HTML tags to make the necessary style load
-     */
-    function osc_load_style($id) {
-        Styles::newInstance()->printStyle($id);
-    }
-
-    /**
      * Print the HTML tags to make the style load
      */
     function osc_load_styles() {
         Styles::newInstance()->printStyles();
     }
 
-    function osc_print_bulk_actions($id, $name, $options, $class = '', $attributes = '') {
-        echo '<select id="' . $id . '" name="' . $name. '" ' . ($class != '' ? 'class="' . $class . '"' : '') . ' ' . $attributes . '>';
+    function osc_print_bulk_actions($id, $name, $options, $class = '') {
+        echo '<select id="'.$id.'" name="'.$name.'" '.($class!=''?'class="'.$class.'"':'').'>';
         foreach($options as $o) {
             $opt = '';
             $label = '';

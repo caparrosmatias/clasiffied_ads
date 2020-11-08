@@ -59,11 +59,7 @@ osc_add_hook('admin_header', 'admin_header_favicons');
 // admin footer
 function admin_footer_html() { ?>
     <div class="float-left">
-        <?php printf(__('Thank you for using <a href="%s" target="_blank">Osclass Evolution</a>'), 'https://forum.osclass-evo.com/'); ?> -
-        <a title="<?php _e('Osclass Market'); ?>" href="https://osclass.market/" target="_blank"><?php _e('Osclass.Market'); ?></a> &middot;
-        <a title="<?php _e('Documentation'); ?>" href="https://osclass-evo.com/docs" target="_blank"><?php _e('Documentation'); ?></a> &middot;
-        <a title="<?php _e('Forums'); ?>" href="https://forum.osclass-evo.com/" target="_blank"><?php _e('Forums'); ?></a> &middot;
-        <a id="osclass-evo-donate" href="javascript:;" title="<?php _e('Donate to us'); ?>"><?php _e('Donate to us'); ?></a>
+        <?php printf(__('Thank you for using %s'), 'Osclass'); ?>
     </div>
     <div class="float-right">
         <strong>Osclass <?php echo preg_replace('|.0$|', '', OSCLASS_VERSION); ?></strong>
@@ -72,15 +68,15 @@ function admin_footer_html() { ?>
     <div class="clear"></div>
     <form id="donate-form" name="_xclick" action="https://www.paypal.com/in/cgi-bin/webscr" method="post" target="_blank">
        <input type="hidden" name="cmd" value="_donations">
-       <input type="hidden" name="business" value="donate@osclass.market">
-       <input type="hidden" name="item_name" value="Osclass Evolution">
+       <input type="hidden" name="business" value="info@osclass.org">
+       <input type="hidden" name="item_name" value="Osclass project">
        <input type="hidden" name="return" value="<?php echo osc_admin_base_url(); ?>">
        <input type="hidden" name="currency_code" value="USD">
        <input type="hidden" name="lc" value="US" />
     </form>
 
 <script type="text/javascript">
-        var $ninja = $('#osclass-evo-donate');
+        var $ninja = $('#ninja');
 
         $ninja.click(function(){
             jQuery('#donate-form').submit();
@@ -385,7 +381,7 @@ function check_version_admin_footer() {
         <?php
     }
 }
-osc_add_hook('admin_footer', 'check_version_admin_footer');
+//osc_add_hook('admin_footer', 'check_version_admin_footer');
 
 function check_languages_admin_footer() {
     ?>

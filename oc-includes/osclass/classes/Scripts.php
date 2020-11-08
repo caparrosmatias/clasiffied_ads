@@ -80,16 +80,6 @@ class Scripts extends Dependencies {
     }
 
     /**
-     *  Print the HTML tags to load the necessary script
-     */
-    public function printScript($id)
-    {
-        if(isset($this->registered[$id]['url'])) {
-            echo '<script type="text/javascript" src="' . osc_apply_filter('theme_url', $this->registered[$id]['url']) . '"></script>' . PHP_EOL;
-        }
-    }
-
-    /**
      *  Print the HTML tags to load the scripts
      */
     public function printScripts()

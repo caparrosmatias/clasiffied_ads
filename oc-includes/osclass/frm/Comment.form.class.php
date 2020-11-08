@@ -33,7 +33,7 @@
             }
         }
 
-        static public function title_input_text($comment = null, $class = '')
+        static public function title_input_text($comment = null)
         {
             $commentTitle = '';
             if( isset($comment['s_title']) ) {
@@ -42,10 +42,10 @@
             if(Session::newInstance()->_getForm('commentTitle') != '') {
                 $commentTitle = Session::newInstance()->_getForm('commentTitle');
             }
-            parent::generic_input_text("title", $commentTitle, null, false, false, $class);
+            parent::generic_input_text("title", $commentTitle, null, false);
         }
 
-        static public function author_input_text($comment = null, $class = '')
+        static public function author_input_text($comment = null)
         {
             $commentAuthorName = '';
             if( isset($comment['s_author_name']) ) {
@@ -54,10 +54,10 @@
             if(Session::newInstance()->_getForm('commentAuthorName') != '') {
                 $commentAuthorName = Session::newInstance()->_getForm('commentAuthorName');
             }
-            parent::generic_input_text("authorName", $commentAuthorName, null, false, false, $class);
+            parent::generic_input_text("authorName", $commentAuthorName, null, false);
         }
 
-        static public function email_input_text($comment = null, $class = '')
+        static public function email_input_text($comment = null)
         {
             $commentAuthorEmail = '';
             if( isset($comment['s_author_email']) ) {
@@ -66,10 +66,10 @@
             if(Session::newInstance()->_getForm('commentAuthorEmail') != '') {
                 $commentAuthorEmail = Session::newInstance()->_getForm('commentAuthorEmail');
             }
-            parent::generic_input_text("authorEmail", $commentAuthorEmail, null, false, false, $class);
+            parent::generic_input_text("authorEmail", $commentAuthorEmail, null, false);
         }
 
-        static public function body_input_textarea($comment = null, $class = '')
+        static public function body_input_textarea($comment = null)
         {
             $commentBody = '';
             if( isset($comment['s_body']) ) {
@@ -78,7 +78,7 @@
             if(Session::newInstance()->_getForm('commentBody') != '') {
                 $commentBody = Session::newInstance()->_getForm('commentBody');
             }
-            parent::generic_textarea("body", $commentBody, $class);
+            parent::generic_textarea("body", $commentBody);
         }
 
         static public function js_validation($admin = false) {

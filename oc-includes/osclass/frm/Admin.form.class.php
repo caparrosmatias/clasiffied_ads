@@ -22,37 +22,37 @@
             parent::generic_input_hidden("id", (isset($admin["pk_i_id"]) ? $admin['pk_i_id'] : '') );
         }
 
-        static public function name_text($admin = null, $class = '') {
-            parent::generic_input_text("s_name", isset($admin['s_name'])? $admin['s_name'] : '', null, false, false, $class);
+        static public function name_text($admin = null) {
+            parent::generic_input_text("s_name", isset($admin['s_name'])? $admin['s_name'] : '', null, false);
         }
 
-        static public function username_text($admin = null, $class = '') {
-            parent::generic_input_text("s_username", isset($admin['s_username'])? $admin['s_username'] : '', null, false, false, $class);
+        static public function username_text($admin = null) {
+            parent::generic_input_text("s_username", isset($admin['s_username'])? $admin['s_username'] : '', null, false);
         }
 
-        static public function old_password_text($admin = null, $class = '') {
-            parent::generic_password("old_password", '', null, false, $class);
+        static public function old_password_text($admin = null) {
+            parent::generic_password("old_password", '', null, false);
         }
 
-        static public function password_text($admin = null, $class = '') {
-            parent::generic_password("s_password", '', null, false, $class);
+        static public function password_text($admin = null) {
+            parent::generic_password("s_password", '', null, false);
         }
 
-        static public function check_password_text($admin = null, $class = '') {
-            parent::generic_password("s_password2", '', null, false, $class);
+        static public function check_password_text($admin = null) {
+            parent::generic_password("s_password2", '', null, false);
         }
 
-        static public function email_text($admin = null, $class = '') {
-            parent::generic_input_text("s_email", isset($admin['s_email'])? $admin['s_email'] : '', null, false, false, $class);
+        static public function email_text($admin = null) {
+            parent::generic_input_text("s_email", isset($admin['s_email'])? $admin['s_email'] : '', null, false);
         }
 
-        static public function type_select($admin = null, $class = '', $attr = '') {
+        static public function type_select($admin = null) {
             $options = array(
                 array( 'i_value' => '0', 's_text' => __('Administrator') )
                 ,array( 'i_value' => '1', 's_text' => __('Moderator') )
             );
 
-            parent::generic_select( 'b_moderator', $options, 'i_value', 's_text', null, (isset($admin['b_moderator'])) ? $admin['b_moderator'] : null, $class, $attr);
+            parent::generic_select( 'b_moderator', $options, 'i_value', 's_text', null, (isset($admin['b_moderator'])) ? $admin['b_moderator'] : null );
         }
 
         static public function js_validation() {

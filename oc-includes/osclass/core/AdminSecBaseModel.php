@@ -49,13 +49,10 @@
             }
 
             // enqueue scripts
-            
-            if(osc_get_preference('admin_theme') == 'modern') {
-                osc_enqueue_script('jquery');
-                osc_enqueue_script('jquery-ui');
-                osc_enqueue_script('admin-osc');
-                osc_enqueue_script('admin-ui-osc');
-            }
+            osc_enqueue_script('jquery');
+            osc_enqueue_script('jquery-ui');
+            osc_enqueue_script('admin-osc');
+            osc_enqueue_script('admin-ui-osc');
         }
 
         function isLogged()

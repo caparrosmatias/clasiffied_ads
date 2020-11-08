@@ -51,26 +51,10 @@
         private function addTableHeader()
         {
 
-            if(osc_get_preference('admin_theme') == 'modern') {
-                $this->addColumn('bulkactions', '<input id="check_all" type="checkbox" />');
-            } else {
-                $this->addColumn('bulkactions', '<div class="form-check">
-                            <label class="form-check-label">
-                                <input id="check_all" class="form-check-input" type="checkbox" />
-                                <span class="form-check-sign">
-                                    <span class="check"></span>
-                                </span>
-                            </label>
-                        </div>');
-            }
-
+            $this->addColumn('bulkactions', '<input id="check_all" type="checkbox" />');
             $this->addColumn('internal_name', __('Internal name'));
             $this->addColumn('title', __('Title'));
             $this->addColumn('order', __('Order'));
-
-            if(osc_get_preference('admin_theme') == 'evolution') {
-                $this->addColumn('actions', __('Actions'));
-            }
 
             $dummy = &$this;
             osc_run_hook("admin_pages_table", $dummy);
@@ -94,47 +78,22 @@
                     // -- options --
                     $options   = array();
                     View::newInstance()->_exportVariableToView('page', $aRow );
-
-                    if(osc_get_preference('admin_theme') == 'modern') {
-                        $options[] = '<a href="' . osc_static_page_url() . '" target="_blank">' . __('View page') . '</a>';
-                        $options[] = '<a href="' . osc_admin_base_url(true) . '?page=pages&amp;action=edit&amp;id=' . $aRow['pk_i_id'] . '">' . __('Edit') . '</a>';
-                        if( !$aRow['b_indelible'] ) {
-                            $options[] = '<a onclick="return delete_dialog(\'' . $aRow['pk_i_id'] . '\');" href="' . osc_admin_base_url(true) . '?page=pages&amp;action=delete&amp;id=' . $aRow['pk_i_id'] . '&amp;' . osc_csrf_token_url() . '">' . __('Delete') . '</a>';
-                        }
-
-                        $auxOptions = '<ul>'.PHP_EOL;
-                        foreach( $options as $actual ) {
-                            $auxOptions .= '<li>'.$actual.'</li>'.PHP_EOL;
-                        }
-                        $actions = '<div class="actions">'.$auxOptions.'</div>'.PHP_EOL;
-
-                        $row['bulkactions'] = '<input type="checkbox" name="id[]"" value="' . $aRow['pk_i_id'] . '"" />';
-                        $row['internal_name'] = $aRow['s_internal_name'] . $actions;
-                        $row['title'] = $content['s_title'];
-                        $row['order'] = '<div class="order-box">' . $aRow['i_order'] . ' <img class="up" onclick="order_up(' . $aRow['pk_i_id'] . ');" src="' . osc_current_admin_theme_url('images/arrow_up.png') . '" alt="' . __('Up') . '" title="' . __('Up') . '" />  <img class="down" onclick="order_down(' . $aRow['pk_i_id'] . ');" src="' . osc_current_admin_theme_url('images/arrow_down.png') .'" alt="' . __('Down') . '" title="' . __('Down') . '" /></div>';
-                    } else {
-                        $btn_actions = '<a href="' . osc_static_page_url() . '" rel="tooltip" class="btn btn-light" title="' . __('View page') . '" target="_blank"><i class="material-icons">visibility</i><div class="ripple-container"></div></a>';
-                        $btn_actions .= '<a href="' . osc_admin_base_url(true) . '?page=pages&action=edit&amp;id=' . $aRow['pk_i_id'] . '" rel="tooltip" class="btn btn-warning" title="' . __('Edit') . '"><i class="material-icons">edit</i><div class="ripple-container"></div></a>';
-
-                        $btn_actions .= '<a id="listing-delete" data-delete-type="pages" data-listing-id="' . $aRow['pk_i_id'] . '" href="' . osc_admin_base_url(true) . '?page=pages&amp;action=delete&amp;id[]=' . $aRow['pk_i_id'] . '" rel="tooltip" class="btn btn-danger" title="' . __('Delete') . '"><i class="material-icons">delete</i><div class="ripple-container"></div></a>';
-
-                        $row['bulkactions'] = '<div class="form-check">
-                            <label class="form-check-label">
-                                <input id="item-selected" class="form-check-input" type="checkbox" name="id[]" value="' . $aRow['pk_i_id'] . '"/>
-                                <span class="form-check-sign">
-                                    <span class="check"></span>
-                                </span>
-                            </label>
-                        </div>';
-
-                        $row['internal_name'] = $aRow['s_internal_name'];
-                        $row['title'] = $content['s_title'];
-                        $row['order'] = '<span class="page-position">' . $aRow['i_order'] . '</span><div class="btn-group btn-group-sm">
-                                          <button type="button" class="btn btn-sm btn-round btn-info" onclick="order_down(' . $aRow['pk_i_id'] . ');" title="' . __('Down') . '"> <i class="material-icons">remove</i> <div class="ripple-container"></div></button>
-                                          <button type="button" class="btn btn-round btn-info" onclick="order_up(' . $aRow['pk_i_id'] . ');" title="' . __('Up') . '"> <i class="material-icons">add</i> <div class="ripple-container"></div></button>
-                                        </div>';
-                        $row['actions'] = $btn_actions;
+                    $options[] = '<a href="' . osc_static_page_url() . '" target="_blank">' . __('View page') . '</a>';
+                    $options[] = '<a href="' . osc_admin_base_url(true) . '?page=pages&amp;action=edit&amp;id=' . $aRow['pk_i_id'] . '">' . __('Edit') . '</a>';
+                    if( !$aRow['b_indelible'] ) {
+                        $options[] = '<a onclick="return delete_dialog(\'' . $aRow['pk_i_id'] . '\');" href="' . osc_admin_base_url(true) . '?page=pages&amp;action=delete&amp;id=' . $aRow['pk_i_id'] . '&amp;' . osc_csrf_token_url() . '">' . __('Delete') . '</a>';
                     }
+
+                    $auxOptions = '<ul>'.PHP_EOL;
+                    foreach( $options as $actual ) {
+                        $auxOptions .= '<li>'.$actual.'</li>'.PHP_EOL;
+                    }
+                    $actions = '<div class="actions">'.$auxOptions.'</div>'.PHP_EOL;
+
+                    $row['bulkactions'] = '<input type="checkbox" name="id[]"" value="' . $aRow['pk_i_id'] . '"" />';
+                    $row['internal_name'] = $aRow['s_internal_name'] . $actions;
+                    $row['title'] = $content['s_title'];
+                    $row['order'] = '<div class="order-box">' . $aRow['i_order'] . ' <img class="up" onclick="order_up(' . $aRow['pk_i_id'] . ');" src="' . osc_current_admin_theme_url('images/arrow_up.png') . '" alt="' . __('Up') . '" title="' . __('Up') . '" />  <img class="down" onclick="order_down(' . $aRow['pk_i_id'] . ');" src="' . osc_current_admin_theme_url('images/arrow_down.png') .'" alt="' . __('Down') . '" title="' . __('Down') . '" /></div>';
 
                     $row = osc_apply_filter('pages_processing_row', $row, $aRow);
 

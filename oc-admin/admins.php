@@ -324,40 +324,21 @@
                                     for($i = $start; $i < $max; $i++) {
 
                                         $admin = $admins[$i];
+
                                         $options = array();
-                                        $row = array();
-
-                                        if(osc_get_preference('admin_theme') == 'modern') {
-                                            $options[] = '<a href="' . osc_admin_base_url(true) . '?page=admins&action=edit&amp;id='  . $admin['pk_i_id'] . '">' . __('Edit') . '</a>';
-                                            $options[] = '<a onclick="return delete_dialog(\'' . $admin['pk_i_id'] . '\');" href="' . osc_admin_base_url(true) . '?page=admins&action=delete&amp;id[]=' . $admin['pk_i_id'] . '">' . __('Delete') . '</a>';
-                                            $auxOptions = '<ul>'.PHP_EOL;
-                                            foreach( $options as $actual ) {
-                                                $auxOptions .= '<li>'.$actual.'</li>'.PHP_EOL;
-                                            }
-                                            $actions = '<div class="actions">'.$auxOptions.'</div>'.PHP_EOL;
-
-                                            $row[] = '<input type="checkbox" name="id[]" value="' . $admin['pk_i_id'] . '" />';
-                                            $row[] = $admin['s_username'] . $actions;
-                                            $row[] = $admin['s_name'];
-                                            $row[] = $admin['s_email'];
-                                        } else {
-                                            $btn_actions = '<a href="' . osc_admin_base_url(true) . '?page=admins&action=edit&amp;id=' . $admin['pk_i_id'] . '" rel="tooltip" class="btn btn-warning" title="' . __('Edit') . '"><i class="material-icons">edit</i><div class="ripple-container"></div></a>';
-
-                                            $btn_actions .= '<a id="listing-delete" data-delete-type="admin" data-listing-id="' . $admin['pk_i_id'] . '" href="' . osc_admin_base_url(true) . '?page=admins&amp;action=delete&amp;id[]=' . $admin['pk_i_id'] . '" rel="tooltip" class="btn btn-danger" title="' . __('Delete') . '"><i class="material-icons">delete</i><div class="ripple-container"></div></a>';
-
-                                            $row[] = '<div class="form-check">
-                                                        <label class="form-check-label">
-                                                            <input id="item-selected" class="form-check-input" type="checkbox" name="id[]" value="' . $admin['pk_i_id'] . '"/>
-                                                            <span class="form-check-sign">
-                                                                <span class="check"></span>
-                                                            </span>
-                                                        </label>
-                                                    </div>';
-                                            $row[] = $admin['s_username'];
-                                            $row[] = $admin['s_name'];
-                                            $row[] = $admin['s_email'];
-                                            $row[] = $btn_actions;
+                                        $options[] = '<a href="' . osc_admin_base_url(true) . '?page=admins&action=edit&amp;id='  . $admin['pk_i_id'] . '">' . __('Edit') . '</a>';
+                                        $options[] = '<a onclick="return delete_dialog(\'' . $admin['pk_i_id'] . '\');" href="' . osc_admin_base_url(true) . '?page=admins&action=delete&amp;id[]=' . $admin['pk_i_id'] . '">' . __('Delete') . '</a>';
+                                        $auxOptions = '<ul>'.PHP_EOL;
+                                        foreach( $options as $actual ) {
+                                            $auxOptions .= '<li>'.$actual.'</li>'.PHP_EOL;
                                         }
+                                        $actions = '<div class="actions">'.$auxOptions.'</div>'.PHP_EOL;
+
+                                        $row = array();
+                                        $row[] = '<input type="checkbox" name="id[]" value="' . $admin['pk_i_id'] . '" />';
+                                        $row[] = $admin['s_username'] . $actions;
+                                        $row[] = $admin['s_name'];
+                                        $row[] = $admin['s_email'];
 
                                         $aData[] = $row;
                                     }

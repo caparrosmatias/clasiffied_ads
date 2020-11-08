@@ -68,7 +68,6 @@
                     $recaptchaPubKey  = Params::getParam('recaptchaPubKey');
                     $recaptchaPubKey  = trim($recaptchaPubKey);
                     $recaptchaVersion = Params::getParam('recaptchaVersion');
-
                     $recaptchaVersion = trim($recaptchaVersion);
 
                     $iUpdated += osc_set_preference('recaptchaPrivKey', $recaptchaPrivKey);
@@ -80,7 +79,6 @@
                     } else {
                         osc_add_flash_ok_message( _m('Your reCAPTCHA key has been updated') ,'admin');
                     }
-
                     $this->redirectTo(osc_admin_base_url(true) . '?page=settings&action=spamNbots');
                 break;
             }

@@ -140,7 +140,6 @@
         {
             $data['s_value'] = osc_active_plugins();
             $plugins_list = unserialize($data['s_value']);
-
             if(is_array($plugins_list)) {
                 foreach($plugins_list as $plugin_name) {
                     $pluginPath = osc_plugins_path() . $plugin_name;

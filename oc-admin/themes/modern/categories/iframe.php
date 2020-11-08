@@ -62,8 +62,6 @@
     $(document).ready(function() {
         $('.iframe-category form').submit(function() {
             $(".jsMessage").hide();
-            
-            console.log($(this).serialize());
             $.ajax({
                 type: 'POST',
                 url: $(this).attr('action'),

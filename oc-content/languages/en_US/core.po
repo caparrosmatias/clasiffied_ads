@@ -13,7 +13,7 @@ msgstr ""
 "Language-Team: Translations <translations@osclass.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Language: en_US\n"
-"X-Generator: Poedit 2.0.1\n"
+"X-Generator: Poedit 1.6.10\n"
 
 #: index.php:50 oc-admin/themes/modern/tools/maintenance.php:38
 msgid "Maintenance &raquo; %s"

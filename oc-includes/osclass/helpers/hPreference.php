@@ -267,42 +267,6 @@
     }
 
     /**
-     * Gets if description editor is o not enabled in admin panel item's form
-     *
-     * @return boolean
-     */
-    function osc_editor_enabled_at_items() {
-        return (getBoolPreference('enableField#editor@items'));
-    }
-
-    /**
-     * Get redirection page after item posted
-     *
-     * @return string
-     */
-    function osc_item_posted_redirect() {
-        return (getPreference('item_posted_redirect'));
-    }
-
-    /**
-     * Gets if the items should be moderation after items posted
-     *
-     * @return boolean
-     */
-    function osc_items_posted_moderation_enabled() {
-        return (getBoolPreference('enableField#listingsPostedModeration@items'));
-    }
-
-    /**
-     * Gets if the items should be moderation after items edited
-     *
-     * @return boolean
-     */
-    function osc_items_edited_moderation_enabled() {
-        return (getBoolPreference('enableField#listingsEditedModeration@items'));
-    }
-
-    /**
      * Gets if the prices are o not enabled on the item's form
      *
      * @return boolean
@@ -577,6 +541,15 @@
     }
 
     /**
+     * Gets current admin theme
+     *
+     * @return string
+     */
+    function osc_admin_theme() {
+        return (getPreference('admin_theme'));
+    }
+
+    /**
      * Gets website description
      *
      * @return string
@@ -619,15 +592,6 @@
      */
     function osc_week_starts_at() {
         return (getPreference('weekStart'));
-    }
-
-    /**
-     * Get Admin Template
-     *
-     * @return string
-     */
-    function osc_admin_theme() {
-        return (getPreference('admin_theme'));
     }
 
     /**
@@ -969,24 +933,6 @@
      */
     function osc_selectable_parent_categories() {
         return(getPreference('selectable_parent_categories'));
-    }
-
-    /**
-     * Gets if preloading pages in the admin panel are enabled or not
-     *
-     * @return boolean
-     */
-    function osc_admin_pages_preloading() {
-        return(getPreference('admin_pages_preloading'));
-    }
-
-    /**
-     * Gets if scrolling pages by dragging the mouse in the admin panel are enabled or not
-     *
-     * @return boolean
-     */
-    function osc_admin_scrolling_mouse() {
-        return(getPreference('admin_scrolling_mouse'));
     }
 
     /**

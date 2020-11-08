@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-    osc_enqueue_script('tiny_mce5');
+    osc_enqueue_script('tiny_mce');
 
     $page       = __get('page');
     $templates  = __get('templates');
@@ -58,49 +58,26 @@
         <script type="text/javascript">
             tinyMCE.init({
                 mode : "textareas",
-                mobile: {
-                    // theme: 'mobile',
-                    menubar: 'edit view insert format table'
-                },
-                menu: {
-                    edit: {title: 'Edit', items: 'undo redo | selectall'}
-                },
-                menubar: 'edit view insert format table',
                 width: "100%",
                 height: "440px",
                 language: 'en',
-                branding: false,
-                plugins : 'advlist autolink lists link image imagetools media charmap preview anchor searchreplace visualblocks code codesample fullscreen insertdatetime media table contextmenu',
-                toolbar: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | codesample code',
+                theme_advanced_toolbar_align : "left",
+                theme_advanced_toolbar_location : "top",
+                plugins : [
+                    "advlist autolink lists link image charmap preview anchor",
+                    "searchreplace visualblocks code fullscreen",
+                    "insertdatetime media table contextmenu paste"
+                ],
                 entity_encoding : "raw",
-                relative_urls: false,
-                remove_script_host: false,
-                convert_urls: false,
-                media_live_embeds: true,
-                image_advtab: true,
-                paste_data_images: true,
-                link_assume_external_targets: true,
-                link_quicklink: true,
-                file_picker_types: 'image media',
-                file_picker_callback: function(callback, value, meta) {
-                    if (meta.filetype == 'image') {
-                        $('#upload').trigger('click');
-
-                        $('#upload').on('change', function() {
-                            var file = this.files[0];
-                            var reader = new FileReader();
-
-                            reader.onload = function(e) {
-                                callback(e.target.result, {
-                                    alt: ''
-                                });
-                            };
-
-                            reader.readAsDataURL(file);
-                        });
-                    }
-                }
+                theme_advanced_buttons1_add : "forecolorpicker,fontsizeselect",
+                theme_advanced_buttons2_add: "media",
+                theme_advanced_buttons3: "",
+                theme_advanced_disable : "styleselect,anchor",
+                relative_urls : false,
+                remove_script_host : false,
+                convert_urls : false
             });
+
         </script>
         <?php
     }
@@ -113,7 +90,6 @@
      <form action="<?php echo osc_admin_base_url(true); ?>" method="post">
         <input type="hidden" name="page" value="pages" />
         <input type="hidden" name="action" value="<?php echo customFrmText('action_frm'); ?>" />
-         <input id="upload" class="hide" type="file" name="image" >
         <?php PageForm::primary_input_hidden($page); ?>
         <?php printLocaleTitlePage($locales, $page); ?>
         <div>

@@ -59,79 +59,62 @@
                                         $this->doView("users/frm.php");
                 break;
                 case('create_post'):    // creating the user...
-                    osc_csrf_check();
-                    require_once LIB_PATH . 'osclass/UserActions.php';
-                    $userActions = new UserActions(true);
-                    $success     = $userActions->add();
+                                        osc_csrf_check();
+                                        require_once LIB_PATH . 'osclass/UserActions.php';
+                                        $userActions = new UserActions(true);
+                                        $success     = $userActions->add();
 
-                    switch($success) {
-                        case 1: osc_add_flash_ok_message( _m("The user has been created. We've sent an activation e-mail"), 'admin');
-                        break;
-                        case 2: osc_add_flash_ok_message( _m('The user has been created successfully'), 'admin');
-                        break;
-                        default: osc_add_flash_error_message( $success, 'admin');
-                        break;
-                    }
+                                        switch($success) {
+                                            case 1: osc_add_flash_ok_message( _m("The user has been created. We've sent an activation e-mail"), 'admin');
+                                            break;
+                                            case 2: osc_add_flash_ok_message( _m('The user has been created successfully'), 'admin');
+                                            break;
+                                            default: osc_add_flash_error_message( $success, 'admin');
+                                            break;
+                                        }
 
-                    $this->redirectTo(osc_admin_base_url(true) . '?page=users');
+                                        $this->redirectTo(osc_admin_base_url(true) . '?page=users');
                 break;
                 case('edit'):           // calling the edit view
-                    $aUser = $this->userManager->findByPrimaryKey(Params::getParam("id"));
-                    $aCountries = Country::newInstance()->listAll();
-                    $aRegions = array();
-                    if( $aUser['fk_c_country_code'] != '' ) {
-                        $aRegions = Region::newInstance()->findByCountry($aUser['fk_c_country_code']);
-                    } else if( count($aCountries) > 0 ) {
-                        $aRegions = Region::newInstance()->findByCountry($aCountries[0]['pk_c_code']);
-                    }
-                    $aCities = array();
-                    if( $aUser['fk_i_region_id'] != '' ) {
-                        $aCities = City::newInstance()->findByRegion($aUser['fk_i_region_id']);
-                    } else if( count($aRegions) > 0 ) {
-                        $aCities = City::newInstance()->findByRegion($aRegions[0]['pk_i_id']);
-                    }
+                                        $aUser = $this->userManager->findByPrimaryKey(Params::getParam("id"));
+                                        $aCountries = Country::newInstance()->listAll();
+                                        $aRegions = array();
+                                        if( $aUser['fk_c_country_code'] != '' ) {
+                                            $aRegions = Region::newInstance()->findByCountry($aUser['fk_c_country_code']);
+                                        } else if( count($aCountries) > 0 ) {
+                                            $aRegions = Region::newInstance()->findByCountry($aCountries[0]['pk_c_code']);
+                                        }
+                                        $aCities = array();
+                                        if( $aUser['fk_i_region_id'] != '' ) {
+                                            $aCities = City::newInstance()->findByRegion($aUser['fk_i_region_id']);
+                                        } else if( count($aRegions) > 0 ) {
+                                            $aCities = City::newInstance()->findByRegion($aRegions[0]['pk_i_id']);
+                                        }
 
-                    $csrf_token = osc_csrf_token_url();
+                                        $csrf_token = osc_csrf_token_url();
+                                        if( $aUser['b_active'] ) {
+                                            $actions[] = '<a class="btn float-left" href="'.osc_admin_base_url(true).'?page=users&action=deactivate&id[]='.$aUser['pk_i_id'].'&'.$csrf_token.'&value=INACTIVE">'.__('Deactivate') .'</a>';
+                                            } else {
+                                            $actions[] = '<a class="btn btn-red float-left" href="'.osc_admin_base_url(true).'?page=users&action=activate&id[]='.$aUser['pk_i_id'].'&'.$csrf_token.'&value=ACTIVE">'.__('Activate') .'</a>';
+                                        }
+                                        if( $aUser['b_enabled'] ) {
+                                            $actions[] = '<a class="btn float-left" href="'.osc_admin_base_url(true).'?page=users&action=disable&id[]='.$aUser['pk_i_id'].'&'.$csrf_token.'&value=DISABLE">'.__('Block') .'</a>';
+                                            } else {
+                                            $actions[] = '<a class="btn btn-red float-left" href="'.osc_admin_base_url(true).'?page=users&action=enable&id[]='.$aUser['pk_i_id'].'&'.$csrf_token.'&value=ENABLE">'.__('Unblock') .'</a>';
+                                        }
+                                        $aLocale = $aUser['locale'];
+                                        foreach ($aLocale as $locale => $aInfo) {
+                                            $aUser['locale'][$locale]['s_info'] = osc_apply_filter('admin_user_profile_info', $aInfo['s_info'], $aUser['pk_i_id'], $aInfo['fk_c_locale_code']);
+                                        }
 
-                    if(osc_get_preference('admin_theme') == 'evolution') {
-                        if( $aUser['b_active'] ) {
-                            $actions[] = '<a class="btn btn-sm btn-danger" href="'.osc_admin_base_url(true).'?page=users&action=deactivate&id[]='.$aUser['pk_i_id'].'&'.$csrf_token.'&value=INACTIVE">'.__('Deactivate') .'</a>';
-                        } else {
-                            $actions[] = '<a class="btn btn-sm btn-success" href="'.osc_admin_base_url(true).'?page=users&action=activate&id[]='.$aUser['pk_i_id'].'&'.$csrf_token.'&value=ACTIVE">'.__('Activate') .'</a>';
-                        }
+                                        $this->_exportVariableToView("actions", $actions);
 
-                        if( $aUser['b_enabled'] ) {
-                            $actions[] = '<a class="btn btn-sm btn-danger" href="'.osc_admin_base_url(true).'?page=users&action=disable&id[]='.$aUser['pk_i_id'].'&'.$csrf_token.'&value=DISABLE">'.__('Block') .'</a>';
-                        } else {
-                            $actions[] = '<a class="btn btn-sm btn-success" href="'.osc_admin_base_url(true).'?page=users&action=enable&id[]='.$aUser['pk_i_id'].'&'.$csrf_token.'&value=ENABLE">'.__('Unblock') .'</a>';
-                        }
-                    } else {
-                        if( $aUser['b_active'] ) {
-                            $actions[] = '<a class="btn float-left" href="'.osc_admin_base_url(true).'?page=users&action=deactivate&id[]='.$aUser['pk_i_id'].'&'.$csrf_token.'&value=INACTIVE">'.__('Deactivate') .'</a>';
-                        } else {
-                            $actions[] = '<a class="btn btn-red float-left" href="'.osc_admin_base_url(true).'?page=users&action=activate&id[]='.$aUser['pk_i_id'].'&'.$csrf_token.'&value=ACTIVE">'.__('Activate') .'</a>';
-                        }
-
-                        if( $aUser['b_enabled'] ) {
-                            $actions[] = '<a class="btn float-left" href="'.osc_admin_base_url(true).'?page=users&action=disable&id[]='.$aUser['pk_i_id'].'&'.$csrf_token.'&value=DISABLE">'.__('Block') .'</a>';
-                        } else {
-                            $actions[] = '<a class="btn btn-red float-left" href="'.osc_admin_base_url(true).'?page=users&action=enable&id[]='.$aUser['pk_i_id'].'&'.$csrf_token.'&value=ENABLE">'.__('Unblock') .'</a>';
-                        }
-                    }
-
-                    $aLocale = $aUser['locale'];
-                    foreach ($aLocale as $locale => $aInfo) {
-                        $aUser['locale'][$locale]['s_info'] = osc_apply_filter('admin_user_profile_info', $aInfo['s_info'], $aUser['pk_i_id'], $aInfo['fk_c_locale_code']);
-                    }
-
-                    $this->_exportVariableToView("actions", $actions);
-
-                    $this->_exportVariableToView("user", $aUser);
-                    $this->_exportVariableToView("countries", $aCountries);
-                    $this->_exportVariableToView("regions", $aRegions);
-                    $this->_exportVariableToView("cities", $aCities);
-                    $this->_exportVariableToView("locales", OSCLocale::newInstance()->listAllEnabled());
-                    $this->doView("users/frm.php");
+                                        $this->_exportVariableToView("user", $aUser);
+                                        $this->_exportVariableToView("countries", $aCountries);
+                                        $this->_exportVariableToView("regions", $aRegions);
+                                        $this->_exportVariableToView("cities", $aCities);
+                                        $this->_exportVariableToView("locales", OSCLocale::newInstance()->listAllEnabled());
+                                        $this->doView("users/frm.php");
                 break;
                 case('edit_post'):      // edit post
                                         osc_csrf_check();

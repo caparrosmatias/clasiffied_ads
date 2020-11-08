@@ -140,8 +140,7 @@
                     <span class="list-first"><?php _e('Page'); ?></span>
                 </li>
                 <li class="pagination-input">
-                    <input id="gotoPage" type="text" name="iPage" value="<?php echo osc_esc_html($pageActual); ?>"/>
-                    <button type="submit"><?php _e('Go!'); ?><?php if(osc_get_preference('admin_theme') == 'evolution') echo '<div class="ripple-container"></div>'; ?></button>
+                    <input id="gotoPage" type="text" name="iPage" value="<?php echo osc_esc_html($pageActual); ?>"/><button type="submit"><?php _e('Go!'); ?></button>
                 </li>
             </ul>
         </form>

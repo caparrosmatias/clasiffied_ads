@@ -288,7 +288,7 @@
          * @param array $options
          * @param array $categories
          */
-        public function insertField($name, $type, $slug, $required, $options, $categories = null, $searchable = '') {
+        public function insertField($name, $type, $slug, $required, $options, $categories = null) {
             if($slug=='') {
                 $slug = preg_replace('|([-]+)|', '-', preg_replace('|[^a-z0-9_-]|', '-', strtolower($name)));
             }
@@ -302,17 +302,13 @@
                     $slug = $slug_tmp."_".$slug_k;
                 }
             }
-            $this->dao->insert($this->getTableName(), array("s_name" => $name, "e_type" =>$type, "b_required" => $required, "s_slug" => $slug, 's_options' => $options, "b_searchable" => $searchable));
+            $this->dao->insert($this->getTableName(), array("s_name" => $name, "e_type" =>$type, "b_required" => $required, "s_slug" => $slug, 's_options' => $options));
             $id = $this->dao->insertedId();
             $return = true;
-
-            if(is_array($categories) && count($categories) > 0) {
-                foreach($categories as $c) {
-                    $result = $this->dao->insert(sprintf('%st_meta_categories', DB_TABLE_PREFIX), array('fk_i_category_id' => $c, 'fk_i_field_id' =>$id));
-                    if(!$result) { $return = false; };
-                }
+            foreach($categories as $c) {
+                $result = $this->dao->insert(sprintf('%st_meta_categories', DB_TABLE_PREFIX), array('fk_i_category_id' => $c, 'fk_i_field_id' =>$id));
+                if(!$result) { $return = false; };
             }
-
             return $return;
         }
 

@@ -47,26 +47,11 @@
 
         private function addTableHeader()
         {
-            if(osc_get_preference('admin_theme') == 'modern') {
-                $this->addColumn('bulkactions', '<input id="check_all" type="checkbox" />');
-            } else {
-                $this->addColumn('bulkactions', '<div class="form-check">
-                            <label class="form-check-label">
-                                <input id="check_all" class="form-check-input" type="checkbox" />
-                                <span class="form-check-sign">
-                                    <span class="check"></span>
-                                </span>
-                            </label>
-                        </div>');
-            }
 
+            $this->addColumn('bulkactions', '<input id="check_all" type="checkbox" />');
             $this->addColumn('name', __('Ban name / Reason'));
             $this->addColumn('ip', __('IP rule'));
             $this->addColumn('email', __('E-mail rule'));
-
-            if(osc_get_preference('admin_theme') == 'evolution') {
-                $this->addColumn('actions', __('Actions'));
-            }
 
             $dummy = &$this;
             osc_run_hook("admin_rules_table", $dummy);
@@ -81,61 +66,34 @@
                     $row = array();
                     $options        = array();
                     $options_more   = array();
+                    // first column
 
-                    if(osc_get_preference('admin_theme') == 'modern') {
-                        $options[]  = '<a href="' . osc_admin_base_url(true) . '?page=users&action=edit_ban_rule&amp;id=' . $aRow['pk_i_id'] . '">' . __('Edit') . '</a>';
-                        $options[]  = '<a onclick="return delete_dialog(\'' . $aRow['pk_i_id'] . '\');" href="' . osc_admin_base_url(true) . '?page=users&action=delete_ban_rule&amp;id[]=' . $aRow['pk_i_id'] . '">' . __('Delete') . '</a>';
+                    $options[]  = '<a href="' . osc_admin_base_url(true) . '?page=users&action=edit_ban_rule&amp;id=' . $aRow['pk_i_id'] . '">' . __('Edit') . '</a>';
+                    $options[]  = '<a onclick="return delete_dialog(\'' . $aRow['pk_i_id'] . '\');" href="' . osc_admin_base_url(true) . '?page=users&action=delete_ban_rule&amp;id[]=' . $aRow['pk_i_id'] . '">' . __('Delete') . '</a>';
 
-                        $options_more = osc_apply_filter('more_actions_manage_rules', $options_more, $aRow);
-                        // more actions
-                        $moreOptions = '<li class="show-more">'.PHP_EOL.'<a href="#" class="show-more-trigger">'. __('Show more') .'...</a>'. PHP_EOL .'<ul>'. PHP_EOL;
-                        foreach( $options_more as $actual ) {
-                            $moreOptions .= '<li>'.$actual."</li>".PHP_EOL;
-                        }
-                        $moreOptions .= '</ul>'. PHP_EOL .'</li>'.PHP_EOL;
-
-                        $options = osc_apply_filter('actions_manage_rules', $options, $aRow);
-                        // create list of actions
-                        $auxOptions = '<ul>'.PHP_EOL;
-                        foreach( $options as $actual ) {
-                            $auxOptions .= '<li>'.$actual.'</li>'.PHP_EOL;
-                        }
-                        $auxOptions  .= $moreOptions;
-                        $auxOptions  .= '</ul>'.PHP_EOL;
-
-                        $actions = '<div class="actions">'.$auxOptions.'</div>'.PHP_EOL;
-
-                        $row['bulkactions'] = '<div class="form-check">
-                            <label class="form-check-label">
-                                <input id="item-selected" class="form-check-input" type="checkbox" name="id[]" value="' . $aRow['pk_i_id'] . '"/>
-                                <span class="form-check-sign">
-                                    <span class="check"></span>
-                                </span>
-                            </label>
-                        </div>';
-
-                        $row['name'] = $aRow['s_name'] . $actions;
-                        $row['ip'] = $aRow['s_ip'];
-                        $row['email'] = $aRow['s_email'];
-                    } else {
-                        $btn_actions = '<a href="' . osc_admin_base_url(true) . '?page=users&action=edit_ban_rule&amp;id=' . $aRow['pk_i_id'] . '" rel="tooltip" class="btn btn-warning" title="' . __('Edit') . '"><i class="material-icons">edit</i><div class="ripple-container"></div></a>';
-
-                        $btn_actions .= '<a id="listing-delete" data-delete-type="rules" data-listing-id="' . $aRow['pk_i_id'] . '" href="' . osc_admin_base_url(true) . '?page=users&amp;action=delete_ban_rule&amp;id[]=' . $aRow['pk_i_id'] . '" rel="tooltip" class="btn btn-danger" title="' . __('Delete') . '"><i class="material-icons">delete</i><div class="ripple-container"></div></a>';
-
-                        $row['bulkactions'] = '<div class="form-check">
-                            <label class="form-check-label">
-                                <input id="item-selected" class="form-check-input" type="checkbox" name="id[]" value="' . $aRow['pk_i_id'] . '"/>
-                                <span class="form-check-sign">
-                                    <span class="check"></span>
-                                </span>
-                            </label>
-                        </div>';
-
-                        $row['name'] = $aRow['s_name'];
-                        $row['ip'] = $aRow['s_ip'];
-                        $row['email'] = $aRow['s_email'];
-                        $row['actions'] = $btn_actions;
+                    $options_more = osc_apply_filter('more_actions_manage_rules', $options_more, $aRow);
+                    // more actions
+                    $moreOptions = '<li class="show-more">'.PHP_EOL.'<a href="#" class="show-more-trigger">'. __('Show more') .'...</a>'. PHP_EOL .'<ul>'. PHP_EOL;
+                    foreach( $options_more as $actual ) { 
+                        $moreOptions .= '<li>'.$actual."</li>".PHP_EOL;
                     }
+                    $moreOptions .= '</ul>'. PHP_EOL .'</li>'.PHP_EOL;
+
+                    $options = osc_apply_filter('actions_manage_rules', $options, $aRow);
+                    // create list of actions
+                    $auxOptions = '<ul>'.PHP_EOL;
+                    foreach( $options as $actual ) {
+                        $auxOptions .= '<li>'.$actual.'</li>'.PHP_EOL;
+                    }
+                    $auxOptions  .= $moreOptions;
+                    $auxOptions  .= '</ul>'.PHP_EOL;
+
+                    $actions = '<div class="actions">'.$auxOptions.'</div>'.PHP_EOL;
+
+                    $row['bulkactions'] = '<input type="checkbox" name="id[]" value="' . $aRow['pk_i_id'] . '" /></div>';
+                    $row['name'] = $aRow['s_name'] . $actions;
+                    $row['ip'] = $aRow['s_ip'];
+                    $row['email'] = $aRow['s_email'];
 
                     $row = osc_apply_filter('rules_processing_row', $row, $aRow);
 

@@ -22,74 +22,74 @@
             parent::generic_input_hidden("id", (isset($user["pk_i_id"]) ? $user['pk_i_id'] : '') );
         }
 
-        static public function name_text($user = null, $class = '') {
+        static public function name_text($user = null) {
             if( Session::newInstance()->_getForm('user_s_name') != '' ) {
                 $user['s_name'] = Session::newInstance()->_getForm('user_s_name');
             }
-            parent::generic_input_text("s_name", isset($user['s_name'])? $user['s_name'] : '', null, false, false, $class);
+            parent::generic_input_text("s_name", isset($user['s_name'])? $user['s_name'] : '', null, false);
         }
 
-        static public function username_text($user = null, $class = '') {
+        static public function username_text($user = null) {
             if( Session::newInstance()->_getForm('user_s_username') != '' ) {
                 $user['s_username'] = Session::newInstance()->_getForm('user_s_username');
             }
-            parent::generic_input_text("s_username", isset($user['s_username'])? $user['s_username'] : '', null, false, false, $class);
+            parent::generic_input_text("s_username", isset($user['s_username'])? $user['s_username'] : '', null, false);
         }
 
-        static public function email_login_text($user = null, $class = '') {
-            parent::generic_input_text("email", isset($user['s_email'])? $user['s_email'] : '', null, false, false, $class);
+        static public function email_login_text($user = null) {
+            parent::generic_input_text("email", isset($user['s_email'])? $user['s_email'] : '', null, false);
         }
 
-        static public function password_login_text($user = null, $class = '') {
-            parent::generic_password("password", '', null, false, false, $class);
+        static public function password_login_text($user = null) {
+            parent::generic_password("password", '', null, false);
         }
 
         static public function rememberme_login_checkbox($user = null) {
             parent::generic_input_checkbox("remember", '1', false);
         }
 
-        static public function old_password_text($user = null, $class = '') {
-            parent::generic_password("old_password", '', null, false, false, $class);
+        static public function old_password_text($user = null) {
+            parent::generic_password("old_password", '', null, false);
         }
 
-        static public function password_text($user = null, $class = '') {
-            parent::generic_password("s_password", '', null, false, $class);
+        static public function password_text($user = null) {
+            parent::generic_password("s_password", '', null, false);
         }
 
-        static public function check_password_text($user = null, $class = '') {
-            parent::generic_password("s_password2", '', null, false, $class);
+        static public function check_password_text($user = null) {
+            parent::generic_password("s_password2", '', null, false);
         }
 
-        static public function email_text($user = null, $class = '') {
+        static public function email_text($user = null) {
             if( Session::newInstance()->_getForm('user_s_email') != '' ) {
                 $user['s_email'] = Session::newInstance()->_getForm('user_s_email');
             }
-            parent::generic_input_text("s_email", isset($user['s_email'])? $user['s_email'] : '', null, false, false, $class);
+            parent::generic_input_text("s_email", isset($user['s_email'])? $user['s_email'] : '', null, false);
         }
 
-        static public function website_text($user = null, $class = '') {
-            parent::generic_input_text("s_website", isset($user['s_website'])? $user['s_website'] : '', null, false, false, $class);
+        static public function website_text($user = null) {
+            parent::generic_input_text("s_website", isset($user['s_website'])? $user['s_website'] : '', null, false);
         }
 
-        static public function mobile_text($user = null, $class = '') {
+        static public function mobile_text($user = null) {
             if( Session::newInstance()->_getForm('user_s_phone_mobile') != '' ) {
                 $user['s_phone_mobile'] = Session::newInstance()->_getForm('user_s_phone_mobile');
             }
-            parent::generic_input_text("s_phone_mobile", isset($user['s_phone_mobile'])? $user['s_phone_mobile'] : '', null, false, false, $class);
+            parent::generic_input_text("s_phone_mobile", isset($user['s_phone_mobile'])? $user['s_phone_mobile'] : '', null, false);
         }
 
-        static public function phone_land_text($user = null, $class = '') {
+        static public function phone_land_text($user = null) {
             if( Session::newInstance()->_getForm('user_s_phone_land') != '' ) {
                 $user['s_phone_land'] = Session::newInstance()->_getForm('user_s_phone_land');
             }
-            parent::generic_input_text("s_phone_land", isset($user['s_phone_land'])? $user['s_phone_land'] : '', null, false, false, $class);
+            parent::generic_input_text("s_phone_land", isset($user['s_phone_land'])? $user['s_phone_land'] : '', null, false);
         }
 
-        static public function info_textarea($name, $locale = 'en_US', $value = '', $class = '') {
-            parent::generic_textarea($name . '[' . $locale . ']', $value, $class);
+        static public function info_textarea($name, $locale = 'en_US', $value = '') {
+            parent::generic_textarea($name . '[' . $locale . ']', $value);
         }
 
-        static public function multilanguage_info($locales, $user = null, $class = '') {
+        static public function multilanguage_info($locales, $user = null) {
             $num_locales = count($locales);
             if($num_locales > 1) { echo '<div class="tabber">'; }
             foreach($locales as $locale) {
@@ -103,68 +103,68 @@
                             }
                         }
                     }
-                    self::info_textarea('s_info', $locale['pk_c_code'], $info, $class);
+                    self::info_textarea('s_info', $locale['pk_c_code'], $info);
                 if($num_locales>1) { echo '</div>'; };
             }
             if($num_locales>1) { echo '</div>'; };
         }
 
-        static public function country_select($countries, $user = null, $class = '', $attr = '') {
+        static public function country_select($countries, $user = null) {
             if( count($countries) > 1 ) {
-                parent::generic_select('countryId', $countries, 'pk_c_code', 's_name', __('Select a country...'), (isset($user['fk_c_country_code'])) ? $user['fk_c_country_code'] : null, $class, $attr);
+                parent::generic_select('countryId', $countries, 'pk_c_code', 's_name', __('Select a country...'), (isset($user['fk_c_country_code'])) ? $user['fk_c_country_code'] : null);
             } else {
-                parent::generic_input_text('country', ( ! empty($user['s_country']) ? $user['s_country'] : @$countries[0]['s_name']), null, false, false, $class);
+                parent::generic_input_text('country', ( ! empty($user['s_country']) ? $user['s_country'] : @$countries[0]['s_name']));
                 parent::generic_input_hidden('countryId', '');
             }
         }
 
-        static public function country_text($user = null, $class = '') {
-            parent::generic_input_text('country', (isset($user['s_country'])) ? $user['s_country'] : null, null, false, false, $class);
+        static public function country_text($user = null) {
+            parent::generic_input_text('country', (isset($user['s_country'])) ? $user['s_country'] : null);
         }
 
-        static public function region_select($regions, $user = null, $class = '', $attr = '') {
+        static public function region_select($regions, $user = null) {
             if( count($regions) >= 1 ) {
-                parent::generic_select('regionId', $regions, 'pk_i_id', 's_name', __('Select a region...'), (isset($user['fk_i_region_id'])) ? $user['fk_i_region_id'] : null, $class, $attr);
+                parent::generic_select('regionId', $regions, 'pk_i_id', 's_name', __('Select a region...'), (isset($user['fk_i_region_id'])) ? $user['fk_i_region_id'] : null);
             } else {
-                parent::generic_input_text('region', (isset($user['s_region'])) ? $user['s_region'] : null, null, false, false, $class);
+                parent::generic_input_text('region', (isset($user['s_region'])) ? $user['s_region'] : null);
             }
         }
 
-        static public function region_text($user = null, $class = '') {
-            parent::generic_input_text('region', (isset($user['s_region'])) ? $user['s_region'] : null, null, false, false, $class);
+        static public function region_text($user = null) {
+            parent::generic_input_text('region', (isset($user['s_region'])) ? $user['s_region'] : null);
         }
 
-        static public function city_select($cities, $user = null, $class = '', $attr = '') {
+        static public function city_select($cities, $user = null) {
             if( count($cities) >= 1 ) {
-                parent::generic_select('cityId', $cities, 'pk_i_id', 's_name', __('Select a city...'), (isset($user['fk_i_city_id'])) ? $user['fk_i_city_id'] : null, $class, $attr);
+                parent::generic_select('cityId', $cities, 'pk_i_id', 's_name', __('Select a city...'), (isset($user['fk_i_city_id'])) ? $user['fk_i_city_id'] : null);
             } else {
-                parent::generic_input_text('city', (isset($user['s_city'])) ? $user['s_city'] : null, null, false, false, $class);
+                parent::generic_input_text('city', (isset($user['s_city'])) ? $user['s_city'] : null);
             }
         }
 
-        static public function city_text($user = null, $class = '') {
-            parent::generic_input_text('city', (isset($user['s_city'])) ? $user['s_city'] : null, null, false, false, $class);
+        static public function city_text($user = null) {
+            parent::generic_input_text('city', (isset($user['s_city'])) ? $user['s_city'] : null);
         }
 
-        static public function city_area_text($user = null, $class = '') {
-            parent::generic_input_text('cityArea', (isset($user['s_city_area'])) ? $user['s_city_area'] : null, null, false, false, $class);
+        static public function city_area_text($user = null) {
+            parent::generic_input_text('cityArea', (isset($user['s_city_area'])) ? $user['s_city_area'] : null);
         }
 
-        static public function address_text($user = null, $class = '') {
-            parent::generic_input_text('address', (isset($user['s_address'])) ? $user['s_address'] : null, null, false, false, $class);
+        static public function address_text($user = null) {
+            parent::generic_input_text('address', (isset($user['s_address'])) ? $user['s_address'] : null);
         }
 
-        static public function zip_text($user = null, $class = '') {
-            parent::generic_input_text('zip', (isset($user['s_zip'])) ? $user['s_zip'] : null, null, false, false, $class);
+        static public function zip_text($user = null) {
+            parent::generic_input_text('zip', (isset($user['s_zip'])) ? $user['s_zip'] : null);
         }
 
-        static public function is_company_select($user = null, $user_label = null, $company_label = null, $class = '', $attr = '') {
+        static public function is_company_select($user = null, $user_label = null, $company_label = null) {
             $options = array(
                 array( 'i_value' => '0', 's_text' => ($user_label?$user_label:__('User')) )
                 ,array( 'i_value' => '1', 's_text' => ($company_label?$company_label:__('Company')) )
             );
 
-            parent::generic_select( 'b_company', $options, 'i_value', 's_text', null, (isset($user['b_company'])) ? $user['b_company'] : null, $class, $attr);
+            parent::generic_select( 'b_company', $options, 'i_value', 's_text', null, (isset($user['b_company'])) ? $user['b_company'] : null );
         }
 
         static public function user_select($users){

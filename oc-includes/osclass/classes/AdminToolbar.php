@@ -49,31 +49,19 @@
         function add_menus()
         {
             // User related, aligned right.
-            if(osc_get_preference('admin_theme') == 'evolution') {
-                osc_add_hook( 'add_admin_toolbar_menus', 'osc_admin_toolbar_comments', 0 );
-                osc_add_hook( 'add_admin_toolbar_menus', 'osc_admin_toolbar_spam', 0 );
-                osc_add_hook( 'add_admin_toolbar_menus', 'osc_admin_toolbar_update_core', 0 );
-                osc_add_hook( 'add_admin_toolbar_menus', 'osc_admin_toolbar_update_themes', 0 );
-                osc_add_hook( 'add_admin_toolbar_menus', 'osc_admin_toolbar_update_plugins', 0 );
-                osc_add_hook( 'add_admin_toolbar_menus', 'osc_admin_toolbar_update_languages', 0 );
-            } else {
-                osc_add_hook( 'add_admin_toolbar_menus', 'osc_admin_toolbar_menu', 0 );
-                osc_add_hook( 'add_admin_toolbar_menus', 'osc_admin_toolbar_comments', 0 );
-                osc_add_hook( 'add_admin_toolbar_menus', 'osc_admin_toolbar_spam', 0 );
+            osc_add_hook( 'add_admin_toolbar_menus', 'osc_admin_toolbar_menu'    , 0 );
+            osc_add_hook( 'add_admin_toolbar_menus', 'osc_admin_toolbar_comments', 0 );
+            osc_add_hook( 'add_admin_toolbar_menus', 'osc_admin_toolbar_spam'    , 0 );
 
-                osc_add_hook( 'add_admin_toolbar_menus', 'osc_admin_toolbar_update_core', 0 );
-                osc_add_hook( 'add_admin_toolbar_menus', 'osc_admin_toolbar_update_themes', 0 );
-                osc_add_hook( 'add_admin_toolbar_menus', 'osc_admin_toolbar_update_plugins', 0 );
-                osc_add_hook( 'add_admin_toolbar_menus', 'osc_admin_toolbar_update_languages', 0 );
+            osc_add_hook( 'add_admin_toolbar_menus', 'osc_admin_toolbar_update_core'        , 0 );
 
-                osc_add_hook( 'add_admin_toolbar_menus', 'osc_admin_toolbar_logout', 0 );
-            }
+            osc_add_hook( 'add_admin_toolbar_menus', 'osc_admin_toolbar_update_themes'      , 0 );
+            osc_add_hook( 'add_admin_toolbar_menus', 'osc_admin_toolbar_update_plugins'     , 0 );
+            osc_add_hook( 'add_admin_toolbar_menus', 'osc_admin_toolbar_update_languages'   , 0 );
+
+            osc_add_hook( 'add_admin_toolbar_menus', 'osc_admin_toolbar_logout'  , 0 );
 
             osc_run_hook( 'add_admin_toolbar_menus' );
-        }
-
-        function notificationsCount() {
-            return count($this->nodes);
         }
         /**
          * Add a node to the menu.
@@ -145,49 +133,33 @@
         public function render()
         {
             if (count($this->nodes) > 0) {
-                if(osc_get_preference('admin_theme') == 'evolution') {
-                    foreach($this->nodes as $value) {
-                        $meta = '';
-
-                        if(isset($value->meta)) {
-                            foreach($value->meta as $k => $v) {
-                                $meta .= $k . '="' . $v . '" ';
-                            }
-                        }
-
-                        echo '<a class="dropdown-item" href="' . $value->href . '" ' . ((isset($value->target)) ? 'target="' . $value->target . '"' : '') . '>' . $value->title . '</a>';
+                echo '<div id="header" class="navbar"><div class="header-wrapper">';
+                foreach($this->nodes as $value) {
+                    $meta = "";
+                    if (isset($value->meta)) {
+                        foreach($value->meta as $k => $v)
+                            $meta .= $k.'="'.$v.'" ';
                     }
-
-                    osc_run_hook('render_admintoolbar');
-                } else {
-                    echo '<div id="header" class="navbar"><div class="header-wrapper">';
-                    foreach($this->nodes as $value) {
-                        $meta = "";
-                        if (isset($value->meta)) {
-                            foreach($value->meta as $k => $v)
-                                $meta .= $k.'="'.$v.'" ';
-                        }
-                        echo '<div id="osc_toolbar_'.$value->id.'" ><a '.$meta.' href="'.$value->href.'" ' . ((isset($value->target)) ? 'target="' . $value->target . '"' : '') . '>'.$value->title.'</a>';
-
-                        if (isset($value->submenu) && is_array($value->submenu)) {
-                            echo '<nav class="osc_admin_submenu" id="osc_toolbar_sub_'.$value->id.'"><ul>';
-                            foreach($value->submenu as $subvalue) {
-                                if (isset($subvalue->subid)) {
-                                    $submeta = "";
-                                    if (isset($subvalue->meta)) {
-                                        foreach($subvalue->meta as $sk => $sv)
-                                            $submeta .= $sk.'="'.$sv.'" ';
-                                    }
-                                    echo '<li><a '.$submeta.' href="'.$subvalue->href.'" ' . ((isset($subvalue->target)) ? 'target="' . $subvalue->target . '"' : '') . '>'.$subvalue->title.'</a><li>';
+                    echo '<div id="osc_toolbar_'.$value->id.'" ><a '.$meta.' href="'.$value->href.'" ' . ((isset($value->target)) ? 'target="' . $value->target . '"' : '') . '>'.$value->title.'</a>';
+                                  
+                    if (isset($value->submenu) && is_array($value->submenu)) {
+                        echo '<nav class="osc_admin_submenu" id="osc_toolbar_sub_'.$value->id.'"><ul>';
+                        foreach($value->submenu as $subvalue) {
+                            if (isset($subvalue->subid)) {                                
+                                $submeta = "";
+                                if (isset($subvalue->meta)) {
+                                    foreach($subvalue->meta as $sk => $sv)
+                                        $submeta .= $sk.'="'.$sv.'" ';
                                 }
+                                echo '<li><a '.$submeta.' href="'.$subvalue->href.'" ' . ((isset($subvalue->target)) ? 'target="' . $subvalue->target . '"' : '') . '>'.$subvalue->title.'</a><li>';    
                             }
-                            echo '</ul></nav>';
                         }
-                        echo '</div>';
+                        echo '</ul></nav>';
                     }
-                    osc_run_hook('render_admintoolbar');
-                    echo '<div style="clear: both;"></div></div></div>';
+                    echo '</div>';                     
                 }
+                osc_run_hook('render_admintoolbar');
+                echo '<div style="clear: both;"></div></div></div>';
             }
         }
     }

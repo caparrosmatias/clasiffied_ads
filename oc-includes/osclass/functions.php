@@ -446,7 +446,7 @@ function osc_admin_toolbar_comments()
 {
     $total = ItemComment::newInstance()->countAll( '( c.b_active = 0 OR c.b_enabled = 0 OR c.b_spam = 1 )' );
     if( $total > 0 ) {
-        $title = __('New comments') . '<i class="circle circle-green notification">'.$total.'</i>';
+        $title = '<i class="circle circle-green">'.$total.'</i>'.__('New comments');
 
         AdminToolbar::newInstance()->add_menu(
                 array('id'    => 'comments',
@@ -461,7 +461,7 @@ function osc_admin_toolbar_spam()
 {
     $total = Item::newInstance()->countByMarkas( 'spam' );
     if( $total > 0 ) {
-        $title = __('Spam') . '<i class="circle circle-red notification">'.$total.'</i>';
+        $title = '<i class="circle circle-red">'.$total.'</i>'.__('Spam');
 
         AdminToolbar::newInstance()->add_menu(
                 array('id'    => 'spam',
@@ -481,7 +481,7 @@ function osc_admin_toolbar_update_core($force = false)
             AdminToolbar::newInstance()->remove_menu('update_core');
         }
         if(isset($data['version']) && $data['version'] > 0) {
-            $title = sprintf(__('Osclass Evolution %s is available'), $data['version']);
+            $title = sprintf(__('Osclass %s is available'), $data['s_name']);
             AdminToolbar::newInstance()->add_menu(
                 array('id'    => 'update_core',
                     'title' => $title,

@@ -33,7 +33,6 @@
         private $_relation;
         private $_emptyTree;
         private $_slugs;
-        private $_subCategories;
 
         public static function newInstance($l = '')
         {
@@ -404,7 +403,7 @@
          *
          * @access public
          * @since unknown
-         * @param integer $category
+         * @param integer$category
          * @return array
          */
         public function toRootTree($cat = null)
@@ -437,32 +436,18 @@
          */
         public function findRootCategory($categoryID)
         {
-            $results = $this->listWhere('a.pk_i_id = %d', (int)$categoryID);
+            // juanramon: specific condition
+            // $this->dao->where( 'a.fk_i_parent_id IS NOT NULL' );
+            // $this->dao->where( 'a.pk_i_id', $categoryID );
+            // end specific condition
 
-            if(count($results) && $results[0]['fk_i_parent_id']) {
+            $results = $this->listWhere('a.fk_i_parent_id IS NOT NULL AND a.pk_i_id = %d', (int)$categoryID);
+
+            if( count($results) > 0 ) {
                 return $this->findRootCategory( $results[0]['fk_i_parent_id'] );
             }
 
             return $this->findByPrimaryKey( $categoryID );
-        }
-
-        /**
-         * Return the parent category of a one given
-         *
-         * @access public
-         * @since 4.0.0
-         * @param integer $categoryID
-         * @return array
-         */
-        public function findParentCategory($categoryID)
-        {
-            $results = $this->findByPrimaryKey($categoryID);
-
-            if(count($results) > 0) {
-                return $this->findByPrimaryKey($results['fk_i_parent_id']);
-            }
-
-            return $this->findByPrimaryKey($categoryID);
         }
 
         /**
@@ -542,39 +527,6 @@
         {
             // $this->dao->where( 'fk_i_parent_id', (int)($categoryID));
             return $this->listWhere('fk_i_parent_id = %d', (int)$categoryID);
-        }
-
-        /**
-         * Return list all subcategories of a given category
-         *
-         * @access public
-         * @since 4.0.0
-         * @param integer $category
-         * @return array
-         */
-        public function findAllSubcategories($category = null)
-        {
-            if($category != null && is_numeric($category)) {
-                $subCategories = $this->findSubcategories($category);
-
-                if(count($subCategories)) {
-                    foreach($subCategories as $key => $subCategory) {
-                        $this->_subCategories[$subCategory['pk_i_id']] = $subCategory;
-
-                        $checkSubCategories = $this->findSubcategories($subCategory['pk_i_id']);
-
-                        if(count($checkSubCategories)) {
-                            $this->findAllSubcategories($subCategory['pk_i_id']);
-                        }
-                    }
-
-                    return $this->_subCategories;
-                }
-
-                return array();
-            }
-
-            return array();
         }
 
         /**
@@ -808,7 +760,7 @@
                     //UPDATE for description of categories
                     $fieldsDescription['fk_i_category_id'] = $pk;
                     $fieldsDescription['fk_c_locale_code'] = $k;
-                    $slug_tmp = $slug = osc_sanitizeString(osc_apply_filter('slug', isset($fieldsDescription['s_slug'])?$fieldsDescription['s_slug']:$fieldsDescription['s_name']));
+                    $slug_tmp = $slug = osc_sanitizeString(osc_apply_filter('slug', isset($fieldsDescription['s_name'])?$fieldsDescription['s_name']:''));
                     $slug_unique = 1;
                     while(true) {
                         $cat_slug = $this->findBySlug($slug);

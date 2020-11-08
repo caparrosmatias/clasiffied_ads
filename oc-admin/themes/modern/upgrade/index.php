@@ -39,11 +39,8 @@
                     $('#tohide').hide();
 
                     $.get('<?php echo osc_admin_base_url(true); ?>?page=upgrade&action=upgrade-funcs' , function(data) {
-                        setTimeout(function() {
-                            window.location = "<?php echo osc_admin_base_url(true); ?>?page=tools&action=version";
-                        }, 3000);
-                        // $('#loading_immage').hide();
-                        // $('#result').append(data+"<br/>");
+                        $('#loading_immage').hide();
+                        $('#result').append(data+"<br/>");
                     });
                 <?php } ?>
             });

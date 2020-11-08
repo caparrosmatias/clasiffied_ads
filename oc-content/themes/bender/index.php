@@ -21,11 +21,11 @@
 
 /*
 Theme Name: bender
-Theme URI: https://osclass-evo.com/
+Theme URI: http://osclass.org/
 Description: Bender theme
 Version: 3.1.5
-Author: Osclass Evolution
-Author URI: https://osclass-evo.com/
+Author: Osclass
+Author URI: http://osclass.org/
 Widgets:  header, footer
 Theme update URI: bender
 */
@@ -35,8 +35,8 @@ Theme update URI: bender
              'name'        => 'bender'
             ,'version'     => '3.1.5'
             ,'description' => 'Bender theme'
-            ,'author_name' => 'Osclass Evolution'
-            ,'author_url'  => 'https://osclass-evo.com/'
+            ,'author_name' => 'Osclass'
+            ,'author_url'  => 'http://osclass.org'
             ,'locations'   => array()
         );
     }

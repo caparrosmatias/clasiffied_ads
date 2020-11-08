@@ -49,6 +49,8 @@
         {
             $this->add_menu( __('Dashboard'), osc_admin_base_url(), 'dash', 'moderator');
 
+
+
             $this->add_menu( __('Listings'), osc_admin_base_url(true).'?page=items', 'items', 'moderator');
             $this->add_submenu( 'items', __('Manage listings'), osc_admin_base_url(true).'?page=items', 'items_manage', 'moderator');
             $this->add_submenu( 'items', __('Reported listings'), osc_admin_base_url(true).'?page=items&action=items_reported', 'items_reported', 'moderator');
@@ -92,9 +94,7 @@
             $this->add_submenu( 'users', __('Users'), osc_admin_base_url(true) .'?page=users', 'users_manage', 'administrator');
             $this->add_submenu( 'users', __('User Settings'), osc_admin_base_url(true) .'?page=users&action=settings', 'users_settings', 'administrator');
             $this->add_submenu( 'users', __('Administrators'), osc_admin_base_url(true) .'?page=admins', 'users_administrators_manage', 'administrator');
-
             $this->add_submenu( 'users', __('Your Profile'), osc_admin_base_url(true) .'?page=admins&action=edit', 'users_administrators_profile', 'moderator');
-
             $this->add_submenu( 'users', __('Alerts'), osc_admin_base_url(true) .'?page=users&action=alerts', 'users_alerts', 'administrator');
             $this->add_submenu( 'users', __('Ban rules'), osc_admin_base_url(true) .'?page=users&action=ban', 'users_ban', 'administrator');
 

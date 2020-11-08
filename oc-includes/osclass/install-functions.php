@@ -670,396 +670,211 @@ function finish_installation( $password ) {
 /* Menus */
 function display_database_config() {
     ?>
-    <form id="form-db-install" class="has-form-actions form-horizontal" action="install.php" method="post">
+    <form action="install.php" method="post">
         <input type="hidden" name="step" value="3" />
-        <input id="form-validated" type="hidden" name="form_validated" value="0" />
-
-        <fieldset class="mb-3">
-            <legend><?php _e('Database information'); ?></legend>
-
-            <div class="row no-gutters mt-3">
-                <label class="col-lg-1 col-form-label form-label text-left"><?php _e('Host'); ?></label>
-                <div class="col-lg-9">
-                    <div class="form-group">
-                        <input type="text" class="form-control w-100 d-inline" name="dbhost" required="true" value="localhost" />
-                        <span class="form-text text-muted"><?php _e('Server name or IP where the database engine resides'); ?></span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row no-gutters">
-                <label class="col-lg-1 col-form-label form-label text-left"><?php _e('Database name'); ?></label>
-                <div class="col-lg-9">
-                    <div class="form-group">
-                        <input type="text" class="form-control w-100 d-inline" name="dbname" required="true" value="osclass" />
-                        <span class="form-text text-muted"><?php _e('The name of the database you want to run Osclass Evolution in'); ?></span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row no-gutters">
-                <label class="col-lg-1 col-form-label form-label text-left"><?php _e('User Name'); ?></label>
-                <div class="col-lg-9">
-                    <div class="form-group">
-                        <input id="username" type="text" class="form-control w-100 d-inline" name="username" required="true" />
-                        <span class="form-text text-muted"><?php _e('Your MySQL username'); ?></span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row no-gutters">
-                <label class="col-lg-1 col-form-label form-label text-left"><?php _e('Password'); ?></label>
-                <div class="col-lg-9">
-                    <div class="form-group">
-                        <input id="password" type="password" class="form-control w-100 d-inline" name="password" required="true" />
-                        <span class="form-text text-muted"><?php _e('Your MySQL password'); ?></span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row no-gutters">
-                <label class="col-lg-1 col-form-label form-label text-left"><?php _e('Table prefix'); ?></label>
-                <div class="col-lg-9">
-                    <div class="form-group">
-                        <input type="text" class="form-control w-100 d-inline" name="tableprefix" required="true" value="oc_" />
-                        <span class="form-text text-muted"><?php _e('If you want to run multiple Osclass installations in a single database, change this'); ?></span>
-                    </div>
-                </div>
-            </div>
-        </fieldset>
-
-        <div class="row no-gutters">
-            <div class="col-lg-12 border-bottom border-info mb-3 ml-3">
-                <a id="advanced_install" class="shrink" href="javascript:;">
-                    <span class="material-icons">chevron_right</span>
+        <h2 class="target"><?php _e('Database information'); ?></h2>
+        <div class="form-table">
+            <table>
+                <tbody>
+                <tr>
+                    <th align="left"><label for="dbhost"><?php _e('Host'); ?></label></th>
+                    <td><input type="text" id="dbhost" name="dbhost" value="localhost" size="25" /></td>
+                    <td class="small"><?php _e('Server name or IP where the database engine resides'); ?></td>
+                </tr>
+                <tr>
+                    <th align="left"><label for="dbname"><?php _e('Database name'); ?></label></th>
+                    <td><input type="text" id="dbname" name="dbname" value="osclass" size="25" /></td>
+                    <td class="small"><?php _e('The name of the database you want to run Osclass in'); ?></td>
+                </tr>
+                <tr>
+                    <th align="left"><label for="username"><?php _e('User Name'); ?></label></th>
+                    <td><input type="text" id="username" name="username" size="25" /></td>
+                    <td class="small"><?php _e('Your MySQL username'); ?></td>
+                </tr>
+                <tr>
+                    <th align="left"><label for="password"><?php _e('Password'); ?></label></th>
+                    <td><input type="password" id="password" name="password" value="" size="25" autocomplete="off" /></td>
+                    <td class="small"><?php _e('Your MySQL password'); ?></td>
+                </tr>
+                <tr>
+                    <th align="left"><label for="tableprefix"><?php _e('Table prefix'); ?></label></th>
+                    <td><input type="text" id="tableprefix" name="tableprefix" value="oc_" size="25" /></td>
+                    <td class="small"><?php _e('If you want to run multiple Osclass installations in a single database, change this'); ?></td>
+                </tr>
+                </tbody>
+            </table>
+            <div id="advanced_install" class="shrink">
+                <div class="text">
                     <span><?php _e('Advanced'); ?></span>
-                </a>
-            </div>
-        </div>
-
-        <fieldset id="more-options" class="mb-3 fc-limited">
-            <div class="row no-gutters">
-                <div class="col-lg-11 ml-3 checkbox-radios">
-                    <div class="form-check">
-                        <label class="form-check-label">
-                            <input id="createdb" class="form-check-input" type="checkbox" name="createdb" value="1" />
-                            <?php _e('Create DB');?>
-                            <span class="form-check-sign">
-                                <span class="check"></span>
-                            </span>
-                        </label>
-
-                        <span class="form-text text-muted"><?php _e('Check here if the database is not created and you want to create it now'); ?></span>
-                    </div>
                 </div>
             </div>
-
-            <div class="row no-gutters">
-                <label class="col-lg-1 col-form-label form-label text-left"><?php _e('DB admin username'); ?></label>
-                <div class="col-lg-9">
-                    <div class="form-group">
-                        <input id="admin_username" type="text" class="form-control w-100 d-inline" name="admin_username" required="true" disabled />
-                    </div>
-                </div>
-            </div>
-
-            <div class="row no-gutters">
-                <label class="col-lg-1 col-form-label form-label text-left"><?php _e('DB admin password'); ?></label>
-                <div class="col-lg-9">
-                    <div class="form-group">
-                        <input id="admin_password" type="password" class="form-control w-100 d-inline" name="admin_password" required="true" disabled />
-                        <span id="password_copied" class="form-text text-success fc-limited"><?php _e('Password copied from above'); ?></span>
-                    </div>
-                </div>
-            </div>
-        </fieldset>
-
-        <div class="row no-gutters">
-            <div class="col-md-12 mb-3 ml-3">
-                <button id="btn-db-install" type="submit" class="btn btn-info">
-                    <span class="material-icons">forward</span>
-                    <?php echo osc_esc_html( __('Next') ); ?>
-                </button>
-            </div>
-        </div>
-    </form>
-
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $('#advanced_install').click(function() {
-                $('#more-options').toggle();
-                if( $('#advanced_install').attr('class') == 'shrink' ) {
-                    $('#advanced_install').removeClass('shrink');
-                    $('#advanced_install .material-icons').text('expand_more');
-                } else {
-                    $('#advanced_install').addClass('shrink');
-                    $('#advanced_install .material-icons').text('chevron_right');
-                }
-            });
-
-            $('#createdb').on('click', function() {
-                if($("#createdb").is(':checked')) {
-                    $("#admin_username").removeAttr('disabled');
-                    $("#admin_password").removeAttr('disabled');
-
-                    if($("#admin_username").val() == '') {
-                        $("#admin_username").val($("#username").val());
-                    }
-
-                    if($("#admin_password").val() == '') {
-                        $("#admin_password").val($("#password").val());
-
-                        if($("#password").val()) {
-                            $("#password_copied").show();
+            <script type="text/javascript">
+                $(document).ready(function() {
+                    $('#advanced_install').click(function() {
+                        $('#more-options').toggle();
+                        if( $('#advanced_install').attr('class') == 'shrink' ) {
+                            $('#advanced_install').removeClass('shrink');
+                            $('#advanced_install').addClass('expanded');
+                        } else {
+                            $('#advanced_install').addClass('shrink');
+                            $('#advanced_install').removeClass('expanded');
                         }
-                    }
-                } else {
-                    $("#admin_username").val('');
-                    $("#admin_password").val('');
-                    $("#admin_username").attr('disabled', true);
-                    $("#admin_password").attr('disabled', true);
+                    });
+                    $('#createdb').on('click', function() {
+                        if($("#createdb").is(':checked')) {
+                            if ($("#admin_username").attr("value") == '') {
+                                $("#admin_username").attr("value", $("#username").attr("value"));
+                            };
+                            if ($("#admin_password").attr("value") == '') {
+                                $("#admin_password").attr("value", $("#password").attr("value"));
+                                $("#password_copied").show();
+                            };
+                        } else {
+                            $("#password_copied").hide();
+                        };
+                    });
                     $("#password_copied").hide();
-                }
-            });
-
-            $('#form-db-install').submit(function(e) {
-                if($('#form-validated').val() == 0) {
-                    e.preventDefault();
-                    $('#form-validated').val(1)
-                }
-
-                $('#form-db-install').waitMe({
-                    effect : 'stretch',
-                    text : '<?php _e('Please wait...'); ?>',
-                    bg : 'rgba(255,255,255,0.7)',
-                    color : '#000',
-                    maxSize : '',
-                    waitTime : 5000,
-                    textPos : 'vertical',
-                    fontSize : '18px',
-                    onClose : function() {
-                        $('#form-db-install').waitMe({
-                            effect : 'stretch',
-                            text : '<?php _e('Please wait...'); ?>',
-                            bg : 'rgba(255,255,255,0.7)',
-                            color : '#000',
-                            maxSize : '',
-                            waitTime : -1,
-                            textPos : 'vertical',
-                            fontSize : '18px'
-                        });
-
-                        $('#form-db-install').submit();
-                    }
                 });
-            });
-        });
-    </script>
+            </script>
+            <div style="clear:both;"></div>
+            <table id="more-options" style="display:none;">
+                <tbody>
+                <tr>
+                    <th></th>
+                    <td><input type="checkbox" id="createdb" name="createdb" onclick="db_admin();" value="1" /><label for="createdb"><?php _e('Create DB'); ?></label></td>
+                    <td class="small"><?php _e('Check here if the database is not created and you want to create it now'); ?></td>
+                </tr>
+                <tr id="admin_username_row">
+                    <th align="left"><label for="admin_username"><?php _e('DB admin username'); ?></label></th>
+                    <td><input type="text" id="admin_username" name="admin_username" size="25" disabled="disabled" /></td>
+                    <td></td>
+                </tr>
+                <tr id="admin_password_row">
+                    <th align="left"><label for="admin_password"><?php _e('DB admin password'); ?></label></th>
+                    <td><input type="password" id="admin_password" name="admin_password" value="" size="25" disabled="disabled" autocomplete="off" /> <span id="password_copied"><?php _e('Password copied from above'); ?></span></td>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="clear"></div>
+        <p class="margin20">
+            <input type="submit" class="button" name="submit" value="Next" />
+        </p>
+        <div class="clear"></div>
+    </form>
 <?php
 }
 
 function display_target() {
-    require_once LIB_PATH . 'osclass/helpers/hUtils.php';
-    /*
-    $country_list = osc_file_get_contents('https://geo.osclass.org/newgeo.services.php?action=countries');
-    $country_list = json_decode(substr($country_list, 1, strlen($country_list)-2), true);
+require_once LIB_PATH . 'osclass/helpers/hUtils.php';
+		$country_list = osc_file_get_contents(osc_get_locations_json_url());
+		$country_list = json_decode($country_list, true);
+		$country_list = $country_list['children'];
 
-    $region_list = array();
+		$country_ip = '';
+		if(preg_match('|([a-z]{2})-([A-Z]{2})|', Params::getServerParam('HTTP_ACCEPT_LANGUAGE'), $match)) {
+			$country_ip = $match[2];
+		}
 
-    $country_ip = '';
-    if(preg_match('|([a-z]{2})-([A-Z]{2})|', Params::getServerParam('HTTP_ACCEPT_LANGUAGE'), $match)) {
-        $country_ip = $match[2];
-        $region_list = osc_file_get_contents('https://geo.osclass.org/newgeo.services.php?action=regions&country='.$match[2]);
-        $region_list = json_decode(substr($region_list, 1, strlen($region_list)-2), true);
-    }
-    */
-
-    $countries = osc_get_countries_list_api();
-
-    $country_ip = '';
-
-    if(preg_match('/([a-z]{2})-([A-Z]{2})|([a-z]{2})/', Params::getServerParam('HTTP_ACCEPT_LANGUAGE'), $match)) {
-        if(!$match[1]) {
-            $country_ip = $match[0];
-        } else {
-            $country_ip = $match[1];
-        }
-    }
-
-    if(!isset($countries[0]) || !isset($countries[0]['name'])) {
-        $internet_error = true;
-    }
+		if (!isset($country_list[0]) || !isset($country_list[0]['name'])) {
+			$internet_error = true;
+		}
     ?>
-    <form id="target_form" class="has-form-actions form-horizontal" name="target_form" action="#" method="post">
-        <input id="form-validated" type="hidden" name="form_validated" value="0" />
-
-        <fieldset class="mb-3">
-            <legend><?php _e('Admin user'); ?></legend>
-
-            <div class="row no-gutters mt-3">
-                <label class="col-lg-1 col-form-label form-label text-left"><?php _e('Username'); ?></label>
-                <div class="col-lg-9">
-                    <div class="form-group">
-                        <input id="admin_user" type="text" class="form-control w-100 d-inline" name="s_name" required="true" value="admin" />
-                        <span class="form-text text-muted"><?php _e('You can modify username and password if you like, just change the input value.'); ?></span>
-                    </div>
-                </div>
+    <form id="target_form" name="target_form" action="#" method="post" onsubmit="return false;">
+        <h2 class="target"><?php _e('Information needed'); ?></h2>
+        <div class="form-table">
+            <h2 class="title"><?php _e('Admin user'); ?></h2>
+            <table class="admin-user">
+                <tbody>
+                <tr>
+                    <th><label for="admin_user"><?php _e('Username'); ?></label></th>
+                    <td>
+                        <input size="25" id="admin_user" name="s_name" type="text" value="admin" />
+                    </td>
+                    <td>
+                        <span id="admin-user-error" class="error" aria-hidden="true" style="display:none;"><?php _e('Admin user is required'); ?></span>
+                    </td>
+                </tr>
+                <tr>
+                    <th><label for="s_passwd"><?php _e('Password'); ?></label></th>
+                    <td>
+                        <input size="25" class="password_test" name="s_passwd" id="s_passwd" type="password" value="" autocomplete="off" />
+                    </td>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="admin-user">
+                <?php _e('A password will be automatically generated for you if you leave this blank.'); ?>
+                <img src="<?php echo get_absolute_url() ?>oc-includes/images/question.png" class="question-skip vtip" title="<?php echo osc_esc_html(__('You can modify username and password if you like, just change the input value.')); ?>" alt="" />
             </div>
-
-            <div class="row no-gutters">
-                <label class="col-lg-1 col-form-label form-label text-left"><?php _e('Password'); ?></label>
-                <div class="col-lg-9">
-                    <div class="form-group">
-                        <input id="s_passwd" type="password" class="form-control w-100 d-inline" name="s_passwd" />
-                        <span class="form-text text-muted"><?php _e('A password will be automatically generated for you if you leave this blank.'); ?></span>
-                    </div>
-                </div>
+            <h2 class="title"><?php _e('Contact information'); ?></h2>
+            <table class="contact-info">
+                <tbody>
+                <tr>
+                    <th><label for="webtitle"><?php _e('Web title'); ?></label></th>
+                    <td><input type="text" id="webtitle" name="webtitle" size="25" /></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th><label for="email"><?php _e('Contact e-mail'); ?></label></th>
+                    <td><input type="text" id="email" name="email" size="25" /></td>
+                    <td><span id="email-error" class="error" style="display:none;"><?php _e('Put your e-mail here'); ?></span></td>
+                </tr>
+                </tbody>
+            </table>
+            <h2 class="title"><?php _e('Location'); ?></h2>
+            <p class="space-left-25 left no-bottom"><?php _e('Choose countries/cities where your target users are located'); ?></p>
+            <div id="location-question" class="left question">
+                <img class="vtip" src="<?php echo get_absolute_url(); ?>oc-includes/images/question.png" title="<?php echo osc_esc_html(__("Once you type a country, you'll be able to choose region and city as well. Therefore, the installation will be more specific.")); ?>" alt="" />
             </div>
-        </fieldset>
-
-        <fieldset class="mb-3">
-            <legend><?php _e('Contact information'); ?></legend>
-
-            <div class="row no-gutters mt-3">
-                <label class="col-lg-1 col-form-label form-label text-left"><?php _e('Web title'); ?></label>
-                <div class="col-lg-9">
-                    <div class="form-group">
-                        <input id="webtitle" type="text" class="form-control w-100 d-inline" name="webtitle" required="true" />
+            <div class="clear"></div>
+            <div id="location">
+		<?php if(!$internet_error) { ?>
+                        <input type="hidden" id="skip-location-input" name="skip-location-input" value="0"/>
+                        <div id="country-box">
+                            <select name="locationsql" id="locationsql">
+                                <option value="skip"><?php _e("Skip location"); ?></option>
+                                <!-- <option value="all"><?php _e("International"); ?></option> -->
+								<?php foreach ($country_list as $c) { ?>
+									<?php /* BUG: */ if($c['name'] == '') continue; ?>
+                                    <option value="<?php echo $c['file']; ?>" <?php if(substr($c['file'], 0, 2) == $country_ip) {
+										echo 'selected="selected"';
+									}; ?>><?php echo $c['name']; ?></option>
+								<?php }; ?>
+                            </select>
+                        </div>
+					<?php } else { ?>
+                    <div id="location-error">
+                        <?php _e('No internet connection. You can continue the installation and insert countries later.'); ?>
+                        <input type="hidden" id="skip-location-input" name="skip-location-input" value="1" />
                     </div>
-                </div>
-            </div>
-
-            <div class="row no-gutters">
-                <label class="col-lg-1 col-form-label form-label text-left"><?php _e('Contact e-mail'); ?></label>
-                <div class="col-lg-9">
-                    <div class="form-group">
-                        <input id="email" type="email" class="form-control w-100 d-inline" name="email" required="true" />
-                        <span class="form-text text-muted"><?php _e('Put your e-mail here'); ?></span>
-                    </div>
-                </div>
-            </div>
-        </fieldset>
-
-        <?php if(!$internet_error): ?>
-            <input type="hidden" id="skip-location-input" name="skip_location_input" value="0" />
-            <input type="hidden" id="country-input" name="country-input" value="" />
-            <input type="hidden" id="region-input" name="region-input" value="" />
-            <input type="hidden" id="city-input" name="city-input" value="" />
-
-            <fieldset class="mb-3">
-                <legend><?php _e('Location'); ?></legend>
-
-                <div class="row no-gutters">
-                    <label class="col-lg-1 col-form-label form-label text-left"><?php _e('Choose country where your target users are located'); ?></label>
-                    <div class="col-lg-9">
-                        <select id="location-api" class="selectpicker show-tick" name="location_api" data-dropup-auto="false" data-size="7" data-width="75%" data-style="btn btn-info btn-sm">
-                            <option value="skip"><?php _e("Skip location"); ?></option>
-
-                            <?php foreach($countries as $c): ?>
-                                <option value="<?php echo $c['country_code']; ?>" <?php if($c['country_code'] == $country_ip) echo 'selected'; ?>><?php echo $c['name']; ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                </div>
-            </fieldset>
-        <?php else: ?>
-            <input type="hidden" id="skip-location-input" name="skip_location_input" value="1" />
-        <?php endif; ?>
-
-        <div class="row no-gutters">
-            <div class="col-md-12 mb-3 ml-3">
-                <button id="btn-db-install" type="submit" class="btn btn-info">
-                    <span class="material-icons">forward</span>
-                    <?php echo osc_esc_html( __('Next') ); ?>
-                </button>
+                <?php }; ?>
             </div>
         </div>
+        <div class="clear"></div>
+        <p class="margin20">
+            <a href="#" class="button" onclick="validate_form();">Next</a>
+        </p>
+        <div class="clear"></div>
     </form>
-
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $('#target_form').submit(function(e) {
-                if($('#form-validated').val() == 0) {
-                    e.preventDefault();
-                    $('#form-validated').val(1)
-                }
-
-                var input = $("#target_form input, #target_form select");
-
-                $('#target_form').waitMe({
-                    effect : 'stretch',
-                    text : '<?php _e('Please wait...'); ?>',
-                    bg : 'rgba(255,255,255,0.7)',
-                    color : '#000',
-                    maxSize : '',
-                    waitTime : 5000,
-                    textPos : 'vertical',
-                    fontSize : '18px',
-                    onClose : function() {
-                        $('#target_form').waitMe({
-                            effect : 'stretch',
-                            text : '<?php _e('Please wait...'); ?>',
-                            bg : 'rgba(255,255,255,0.7)',
-                            color : '#000',
-                            maxSize : '',
-                            waitTime : -1,
-                            textPos : 'vertical',
-                            fontSize : '18px'
-                        });
-
-                        $.ajax({
-                            type: 'POST',
-                            dataType: 'json',
-                            url: 'install-location.php',
-                            data: input,
-                            timeout: 600000,
-                            success: function(data) {
-                                if(data.status == true) {
-                                    var form = document.createElement("form");
-                                    form.setAttribute("method", 'POST');
-                                    form.setAttribute("action", 'install.php');
-
-                                    var hiddenField = document.createElement("input");
-                                    hiddenField.setAttribute("type", "hidden");
-                                    hiddenField.setAttribute("name", 'step');
-                                    hiddenField.setAttribute("value", '4');
-                                    form.appendChild(hiddenField);
-
-                                    hiddenField = document.createElement("input");
-                                    hiddenField.setAttribute("type", "hidden");
-                                    hiddenField.setAttribute("name", 'result');
-                                    hiddenField.setAttribute("value", data.email_status);
-                                    form.appendChild(hiddenField);
-
-                                    hiddenField = document.createElement("input");
-                                    hiddenField.setAttribute("type", "hidden");
-                                    hiddenField.setAttribute("name", 'password');
-                                    hiddenField.setAttribute("value", data.password);
-                                    form.appendChild(hiddenField);
-
-                                    document.body.appendChild(form);
-                                    form.submit();
-
-                                } else {
-                                    $('#target_form').waitMe('hide');
-
-                                    alert("Error:<br/>"+data);
-                                    window.location = 'install.php?step=4&error_location=1';
-                                }
-                            }
-                        });
-                    }
-                });
-            });
-        });
-    </script>
+    <div id="lightbox" style="display:none;">
+        <div class="center">
+            <img src="<?php echo get_absolute_url(); ?>oc-includes/images/loading.gif" alt="<?php echo osc_esc_html(__("Loading...")); ?>" title="" />
+        </div>
+    </div>
 <?php
 }
 
 function display_database_error($error ,$step) {
     ?>
-    <p><?php echo $error['error']?></p>
-    <p><a href="<?php echo get_absolute_url(); ?>oc-includes/osclass/install.php?step=<?php echo $step; ?>" class="btn btn-info btn-md"><?php _e('Go back'); ?></a></p>
+    <h2 class="target"><?php _e('Error'); ?></h2>
+    <p class="bottom space-left-10">
+        <?php echo $error['error']?>
+    </p>
+    <a href="<?php echo get_absolute_url(); ?>oc-includes/osclass/install.php?step=<?php echo $step; ?>" class="button"><?php _e('Go back'); ?></a>
+    <div class="clear bottom"></div>
 <?php
 }
 
@@ -1094,25 +909,47 @@ function ping_search_engines($bool){
 function display_finish($password) {
     $data = finish_installation( $password );
     ?>
-    <?php if(Params::getParam('error_location') == 1): ?>
-        <div class="alert alert-danger">
+    <?php if(Params::getParam('error_location') == 1) { ?>
+        <script type="text/javascript">
+            setTimeout (function(){
+                $('.error-location').fadeOut('slow');
+            }, 2500);
+        </script>
+        <div class="error-location">
             <?php _e('The selected location could not been installed'); ?>
         </div>
-    <?php endif; ?>
-
-    <h3 class="text-success mt-0"><?php _e('Congratulations!');?></h3>
-    <p class="ml-3"><?php _e("Osclass Evolution has been installed. Were you expecting more steps? Sorry to disappoint you!"); ?> <span class="material-icons">tag_faces</span></p>
-    <p class="ml-3"><?php echo sprintf(__('An e-mail with the password for oc-admin has been sent to: <strong class="text-info">%s</strong>'), $data['s_email']);?></p>
-
-    <div class="mark rounded p-3 mb-3">
-        <p><strong><?php _e('Username'); ?></strong>: <?php echo $data['admin_user']; ?></p>
-        <p class="mb-0"><strong><?php _e('Password'); ?></strong>: <?php echo osc_esc_html($data['password']); ?></p>
+    <?php } ?>
+    <h2 class="target"><?php _e('Congratulations!');?></h2>
+    <p class="space-left-10"><?php _e("Osclass has been installed. Were you expecting more steps? Sorry to disappoint you!");?></p>
+    <p class="space-left-10"><?php echo sprintf(__('An e-mail with the password for oc-admin has been sent to: %s'), $data['s_email']);?></p>
+    <div style="clear:both;"></div>
+    <div class="form-table finish">
+        <table>
+            <tbody>
+            <tr>
+                <th><span class="label-like"><?php _e('Username');?></span></th>
+                <td>
+                    <div class="s_name">
+                        <span style="float:left;" ><?php echo $data['admin_user']; ?></span>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th><span class="label-like"><?php _e('Password');?></span></th>
+                <td>
+                    <div class="s_passwd">
+                        <span style="float: left;"><?php echo osc_esc_html($data['password']); ?></span>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 
-    <a target="_blank" href="<?php echo get_absolute_url() ?>oc-admin/index.php" class="btn btn-success btn-md mb-4">
-        <span class="material-icons">double_arrow</span>
-        <?php _e('Finish and go to the administration panel');?>
-    </a>
+
+    <p class="margin20">
+        <a target="_blank" href="<?php echo get_absolute_url() ?>oc-admin/index.php" class="button"><?php _e('Finish and go to the administration panel');?></a>
+    </p>
 <?php
 }
 ?>
